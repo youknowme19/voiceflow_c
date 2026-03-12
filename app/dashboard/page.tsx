@@ -1,3 +1,5 @@
+"use client";
+
 import { GlassCard, GradientText, FadeInSection } from '@/components/premium/PremiumUI';
 
 export default function DashboardOverview() {

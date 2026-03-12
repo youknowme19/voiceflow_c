@@ -19,7 +19,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
 
   useEffect(() => {
-    const session = supabase.auth.getSession().then(({ data }) => {
+    // Guard against missing environment variables
+    if (!supabase.auth) {
+      console.warn('Supabase auth not configured - check environment variables');
+      return;
+    }
+
+    supabase.auth.getSession().then(({ data }) => {
       setUser(data.session?.user ?? null);
     });
 
@@ -31,7 +37,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
 
     return () => {
-      listener.subscription.unsubscribe();
+      listener?.subscription?.unsubscribe();
     };
   }, [router]);
 
