@@ -72,7 +72,7 @@ export default function WorkflowExecutionDemo() {
         <div className="grid lg:grid-cols-2 gap-32 items-center">
           {/* Visual: Real Chat UI Frame (Left) */}
           <Reveal direction="right" className="relative group lg:order-first">
-            <div className="bg-[#0B0B0F] rounded-[48px] border border-white/10 shadow-[0_40px_100px_rgba(0,0,0,0.8)] overflow-hidden aspect-[9/14] max-w-[380px] mx-auto flex flex-col relative z-20 transition-all duration-700 group-hover:shadow-[0_60px_120px_rgba(108,99,255,0.2)]">
+            <div className="bg-[#0B0B0F] rounded-[48px] border border-white/10 shadow-[0_40px_100px_rgba(0,0,0,0.8)] overflow-hidden min-h-[640px] max-w-[380px] mx-auto flex flex-col relative z-20 transition-all duration-700 group-hover:shadow-[0_60px_120px_rgba(108,99,255,0.2)]">
                {/* Mobile Status Bar */}
                <div className="h-12 px-10 flex items-center justify-between opacity-30">
                   <span className="text-[11px] font-bold text-white leading-none">9:41</span>

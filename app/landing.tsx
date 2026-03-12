@@ -289,7 +289,7 @@ export default function LandingPage() {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative min-h-[90vh] flex items-center px-6 pt-32 pb-20 overflow-hidden">
+      <section className="relative min-h-[90vh] flex items-center px-6 pt-20 pb-16 overflow-hidden">
         {/* Waveform Background */}
         <Waveform className="opacity-40" />
         
@@ -337,7 +337,7 @@ export default function LandingPage() {
 
 
       {/* Feature Grid */}
-      <section id="features" className="relative py-40 px-6">
+      <section id="features" className="relative py-28 px-6">
         <div className="max-w-7xl mx-auto">
           <FadeInSection className="text-center mb-24">
             <h2 className="text-4xl md:text-6xl font-display font-extrabold mb-6 tracking-tight">
@@ -368,23 +368,8 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Live Workflow Demo - Dedicated Section */}
-      <section className="relative py-40 px-6 overflow-hidden">
-        <div className="max-w-7xl mx-auto flex flex-col items-center">
-          <FadeInSection className="text-center mb-24">
-            <h2 className="text-4xl md:text-6xl font-display font-extrabold mb-6 tracking-tight">
-              A New Era of <GradientText className="text-gradient">Interaction.</GradientText>
-            </h2>
-            <p className="text-white/50 text-xl max-w-2xl mx-auto font-light">
-              See how VoiceBuild turns complex voice requests into structured reasoning and instant action.
-            </p>
-          </FadeInSection>
-          <LiveWorkflowDemo showBackground={true} />
-        </div>
-      </section>
-
       {/* Product Cadence - Alternating Rhythm */}
-      <div className="space-y-0 pt-20">
+      <div className="space-y-0">
         <WorkflowExecutionDemo /> {/* Rhythm A: Visual Left / Text Right */}
         <BuilderUIPreview />      {/* I will adjust this to Rhythm B (Text Left / Visual Right) */}
         <SystemExecutionPreview /> {/* Rhythm A: Visual Left / Text Right */}
@@ -392,7 +377,7 @@ export default function LandingPage() {
       </div>
 
       {/* Pricing Section */}
-      <section id="pricing" className="relative py-40 px-6">
+      <section id="pricing" className="relative py-28 px-6">
         <div className="max-w-7xl mx-auto">
           <FadeInSection className="text-center mb-24">
             <h2 className="text-4xl md:text-6xl font-display font-extrabold mb-6 tracking-tight">
@@ -445,7 +430,7 @@ export default function LandingPage() {
       </section>
 
       {/* Centered CTA Section */}
-      <section className="py-40 px-6">
+      <section className="py-28 px-6">
          <div className="max-w-5xl mx-auto">
             <GlassCard className="p-24 text-center relative overflow-hidden border-accent-purple/20 bg-accent-purple/[0.03]">
                <div className="absolute inset-0 bg-gradient-to-br from-accent-purple/10 to-transparent opacity-50" />
