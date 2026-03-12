@@ -62,7 +62,7 @@ const LiveWorkflowDemo = ({ showBackground = true }: { showBackground?: boolean 
   }, [isInView]);
 
   return (
-    <div ref={containerRef} className="relative w-full max-w-[540px] min-h-[750px] flex items-center justify-center pt-8">
+    <div ref={containerRef} className="relative w-full max-w-[540px] min-h-[750px] flex items-center justify-center pt-12">
       
       {/* Subtle Background Pipeline */}
       {showBackground && (
@@ -329,7 +329,7 @@ export default function LandingPage() {
           </div>
 
           {/* Right: Interactive Phone Demo */}
-          <div className="hidden lg:flex justify-end items-center relative translate-y-4">
+          <div className="hidden lg:flex justify-end items-center relative translate-y-10">
             <LiveWorkflowDemo showBackground={false} />
           </div>
         </div>
