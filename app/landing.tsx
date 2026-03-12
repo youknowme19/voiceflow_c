@@ -4,6 +4,17 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import {
+  Mic,
+  Zap,
+  Link as LinkIcon,
+  BarChart3,
+  ShieldCheck,
+  Users,
+  ChevronRight,
+  ArrowRight,
+} from 'lucide-react';
+
+import {
   GlassCard,
   Button,
   GradientText,
@@ -13,11 +24,13 @@ import {
   ParallaxSection,
 } from '@/components/premium/PremiumUI';
 
-export default function LandingPage() {
-  const [activeFeature, setActiveFeature] = useState(0);
+import WorkflowPreview from '@/components/landing/WorkflowPreview';
+import DragBuilderPreview from '@/components/landing/DragBuilderPreview';
+import AutomationPreview from '@/components/landing/AutomationPreview';
 
+export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-[#0B0B0F] text-white selection:bg-accent-purple/30">
+    <div className="min-h-screen bg-[#0B0B0F] text-white selection:bg-accent-purple/30 font-sans">
       {/* Background Effects */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
         <FloatingOrb size={600} color="#6C63FF" className="-top-40 -left-40 opacity-20" delay={0} />
@@ -29,7 +42,7 @@ export default function LandingPage() {
       <nav className="fixed top-0 left-0 right-0 z-50 premium-blur bg-black/20 border-b border-white/5">
         <div className="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
           <motion.div
-            className="text-2xl font-bold"
+            className="text-2xl font-bold font-display"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
           >
@@ -40,7 +53,7 @@ export default function LandingPage() {
               <motion.a
                 key={item}
                 href={`#${item.toLowerCase()}`}
-                className="text-white/70 hover:text-white transition-colors"
+                className="text-sm font-medium text-white/70 hover:text-white transition-colors tracking-wide uppercase"
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.1 }}
@@ -50,7 +63,7 @@ export default function LandingPage() {
             ))}
           </div>
           <Link href="/login">
-            <Button variant="outline" size="sm">
+            <Button variant="outline" size="sm" className="px-5 font-bold uppercase tracking-widest text-[10px]">
               Sign In
             </Button>
           </Link>
@@ -66,19 +79,19 @@ export default function LandingPage() {
             transition={{ duration: 0.5 }}
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-10"
           >
-            <span className="w-2 h-2 rounded-full bg-accent-cyan animate-pulse" />
-            <span className="text-sm font-medium tracking-wide text-white/70 uppercase">Next-Gen AI Voice Agents</span>
+            <div className="w-2 h-2 rounded-full bg-accent-cyan animate-pulse" />
+            <span className="text-[11px] font-bold tracking-[0.2em] text-white/50 uppercase">The AI Operating System</span>
           </motion.div>
 
           <motion.h1
-            className="text-6xl md:text-8xl font-extrabold tracking-tight mb-8 leading-[1.1]"
+            className="text-6xl md:text-8xl font-display font-extrabold tracking-tight mb-8 leading-[1.1]"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.1 }}
           >
-            Build The Future of
+            Conversational AI
             <br />
-            <GradientText className="text-gradient">Conversational AI</GradientText>
+            <GradientText className="text-gradient">Engineered to Perfection.</GradientText>
           </motion.h1>
 
           <motion.p
@@ -87,7 +100,7 @@ export default function LandingPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.2 }}
           >
-            A powerful, visual building experience designed for products that demand visual excellence and high performance.
+            Deploy high-performance, intelligent voice agents with a world-class visual builder. Built for scalability, styled for excellence.
           </motion.p>
 
           <motion.div
@@ -97,51 +110,27 @@ export default function LandingPage() {
             transition={{ duration: 0.7, delay: 0.3 }}
           >
             <Link href="/dashboard">
-              <Button size="lg" className="rounded-2xl group">
-                Deploy Your Agent
-                <motion.span 
-                  className="ml-2"
-                  animate={{ x: [0, 5, 0] }}
-                  transition={{ repeat: Infinity, duration: 1.5 }}
-                >
-                  →
-                </motion.span>
+              <Button size="lg" className="rounded-2xl group px-10 h-16 text-lg tracking-wide">
+                Start Building Now
+                <ChevronRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
               </Button>
             </Link>
-            <Button variant="secondary" size="lg" className="rounded-2xl">
-              Watch Demo Video
+            <Button variant="secondary" size="lg" className="rounded-2xl px-10 h-16 text-lg tracking-wide border-white/5 hover:border-white/20">
+              Watch Demo
             </Button>
           </motion.div>
         </div>
-        {/* Hero Section Content Ends */}
-      </section>
-
-      {/* Hero Preview Section (Separate or properly nested) */}
-      <section className="relative h-[600px] overflow-hidden -mt-20">
-        <motion.div
-          className="absolute left-1/2 transform -translate-x-1/2 w-full max-w-5xl pointer-events-none"
-          initial={{ opacity: 0, y: 100 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: 'easeOut' }}
-        >
-          <ParallaxSection offset={80}>
-            <GlassCard variant="medium" className="p-8 aspect-video bg-gradient-to-br from-white/10 to-white/5 relative overflow-hidden group">
-               <div className="absolute inset-0 bg-[url('/dashboard-preview.png')] bg-cover opacity-60 group-hover:opacity-80 transition-opacity duration-700" />
-               <div className="absolute inset-0 bg-gradient-to-t from-[#0B0B0F] via-transparent to-transparent" />
-            </GlassCard>
-          </ParallaxSection>
-        </motion.div>
       </section>
 
       {/* Feature Grid */}
-      <section id="features" className="relative py-32 px-6 overflow-hidden">
+      <section id="features" className="relative py-40 px-6 overflow-hidden">
         <div className="max-w-7xl mx-auto">
-          <FadeInSection className="text-center mb-20">
-            <h2 className="text-4xl md:text-6xl font-extrabold mb-6 tracking-tight">
+          <FadeInSection className="text-center mb-24">
+            <h2 className="text-4xl md:text-6xl font-display font-extrabold mb-6 tracking-tight">
               Built for <GradientText className="text-gradient">Performance</GradientText>
             </h2>
-            <p className="text-white/60 text-xl max-w-2xl mx-auto">
-              A suite of tools designed to help you build, deploy, and scale intelligent voice agents with ease.
+            <p className="text-white/50 text-xl max-w-2xl mx-auto font-light">
+              A comprehensive suite of tools designed to help you deploy intelligent voice agents at scale.
             </p>
           </FadeInSection>
 
@@ -150,14 +139,14 @@ export default function LandingPage() {
               <ScaleReveal key={i} delay={i * 0.1}>
                 <GlassCard
                   variant="medium"
-                  className="p-10 h-full group transition-all duration-500 hover:border-accent-purple/50"
+                  className="p-10 h-full group transition-all duration-500 hover:border-accent-purple/50 border-white/5"
                   hover
                 >
-                  <div className="w-14 h-14 rounded-2xl bg-accent-purple/10 flex items-center justify-center text-3xl mb-8 group-hover:scale-110 transition-transform duration-500">
-                    {feature.icon}
+                  <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-8 group-hover:scale-110 group-hover:bg-accent-purple/10 transition-all duration-500">
+                    <feature.icon className="w-6 h-6 text-white group-hover:text-accent-purple transition-colors" />
                   </div>
                   <h3 className="text-2xl font-bold text-white mb-4 tracking-tight">{feature.title}</h3>
-                  <p className="text-white/50 leading-relaxed text-lg">{feature.description}</p>
+                  <p className="text-white/40 leading-relaxed text-lg font-light">{feature.description}</p>
                 </GlassCard>
               </ScaleReveal>
             ))}
@@ -165,86 +154,73 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Builder Preview Section */}
-      <section id="builder" className="relative py-32 px-6 overflow-hidden bg-[#0F0F1A]/30">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-20 items-center">
-            <FadeInSection>
-              <h2 className="text-4xl md:text-6xl font-extrabold mb-8 tracking-tight leading-tight">
-                Visual Logic.
-                <br />
-                <GradientText className="text-gradient">Zero Friction.</GradientText>
-              </h2>
-              <p className="text-white/60 mb-10 text-xl leading-relaxed">
-                Our node-based builder gives you total control over the conversation flow. Connect your data, define your logic, and deploy in seconds.
-              </p>
-              <div className="space-y-6">
-                {[
-                  { title: 'Infinite Canvas', desc: 'Build complex flows without limits.' },
-                  { title: 'AI Orchestration', desc: 'Seamlessly integrate LLMs and tools.' },
-                  { title: 'Real-time Debugging', desc: 'Watch your agent work as you build.' }
-                ].map((item, i) => (
-                  <motion.div
-                    key={i}
-                    className="flex gap-5"
-                    initial={{ opacity: 0, x: -20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.1 }}
-                  >
-                    <div className="mt-1 w-6 h-6 rounded-full bg-accent-cyan/20 flex items-center justify-center flex-shrink-0">
-                      <div className="w-2 h-2 rounded-full bg-accent-cyan" />
-                    </div>
-                    <div>
-                      <h4 className="text-lg font-bold text-white">{item.title}</h4>
-                      <p className="text-white/40">{item.desc}</p>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </FadeInSection>
+      {/* Workflow Preview */}
+      <WorkflowPreview />
 
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9, rotateY: -10 }}
-              whileInView={{ opacity: 1, scale: 1, rotateY: 0 }}
-              transition={{ duration: 1, type: 'spring' }}
-              className="perspective-1000"
-            >
-              <GlassCard variant="strong" className="aspect-video p-1 bg-gradient-to-br from-white/10 to-transparent relative overflow-hidden ring-1 ring-white/20">
-                <div className="w-full h-full bg-[#0B0B0F] rounded-[14px] flex items-center justify-center group">
-                  <div className="absolute inset-0 bg-gradient-to-t from-accent-purple/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                  <div className="text-center relative z-10">
-                    <motion.div 
-                      className="w-20 h-20 rounded-3xl bg-accent-purple/20 flex items-center justify-center text-4xl mb-4 mx-auto"
-                      animate={{ 
-                        boxShadow: ['0 0 0px rgba(108,99,255,0)', '0 0 40px rgba(108,99,255,0.4)', '0 0 0px rgba(108,99,255,0)'] 
-                      }}
-                      transition={{ repeat: Infinity, duration: 2 }}
-                    >
-                      🎨
-                    </motion.div>
-                    <p className="text-white font-bold tracking-widest uppercase text-sm">Interactive Builder Preview</p>
-                    <div className="mt-8 flex justify-center gap-3">
-                       {[1,2,3].map(i => (
-                         <div key={i} className="w-12 h-1 bg-white/10 rounded-full" />
-                       ))}
-                    </div>
-                  </div>
+      {/* Drag Builder Preview */}
+      <DragBuilderPreview />
+
+      {/* Automation Preview */}
+      <AutomationPreview />
+
+      {/* Analytics Preview (Mockup for now) */}
+      <section className="py-40 relative overflow-hidden bg-[#0A0A0F]">
+        <div className="container mx-auto px-6">
+          <div className="grid lg:grid-cols-2 gap-20 items-center">
+             <FadeInSection>
+                <h2 className="text-4xl md:text-6xl font-display font-extrabold mb-8 tracking-tight leading-tight">
+                  Real-time <br />
+                  <GradientText className="text-gradient">Intelligence.</GradientText>
+                </h2>
+                <p className="text-white/50 mb-10 text-xl font-light leading-relaxed">
+                  Track every conversation, monitor response times, and optimize your flows with our built-in analytics dashboard.
+                </p>
+                <div className="grid grid-cols-2 gap-8">
+                   {[
+                     { label: 'Avg Latency', val: '< 200ms' },
+                     { label: 'Success Rate', val: '99.9%' },
+                     { label: 'Active Users', val: '2M+' },
+                     { label: 'API Uptime', val: '99.99%' },
+                   ].map(stat => (
+                     <div key={stat.label}>
+                       <p className="text-[11px] font-bold uppercase tracking-widest text-white/30 mb-1">{stat.label}</p>
+                       <p className="text-2xl font-display font-bold text-white">{stat.val}</p>
+                     </div>
+                   ))}
                 </div>
-              </GlassCard>
-            </motion.div>
+             </FadeInSection>
+             <ScaleReveal delay={0.2} className="relative">
+                <GlassCard className="aspect-[4/3] p-8 border-white/5 overflow-hidden">
+                   <div className="absolute inset-0 bg-gradient-to-br from-accent-purple/10 to-transparent flex items-center justify-center">
+                      <BarChart3 className="w-40 h-40 text-accent-purple opacity-20" />
+                   </div>
+                   <div className="space-y-4">
+                      {[1,2,3,4].map(i => (
+                        <div key={i} className="h-4 bg-white/5 rounded-full w-full relative overflow-hidden">
+                           <motion.div 
+                             initial={{ width: 0 }}
+                             whileInView={{ width: ['0%', '40%', '80%', '60%'][i-1] }}
+                             transition={{ duration: 1.5, delay: 0.5 + (i*0.2) }}
+                             className={`absolute inset-0 bg-gradient-to-r ${['from-accent-purple', 'from-accent-cyan', 'from-accent-pink', 'from-accent-purple'][i-1]} to-transparent opacity-50`} 
+                           />
+                        </div>
+                      ))}
+                   </div>
+                </GlassCard>
+             </ScaleReveal>
           </div>
         </div>
       </section>
 
       {/* Pricing Section */}
-      <section id="pricing" className="relative py-32 px-6">
+      <section id="pricing" className="relative py-40 px-6">
         <div className="max-w-7xl mx-auto">
-          <FadeInSection className="text-center mb-20">
-            <h2 className="text-4xl md:text-6xl font-extrabold mb-6 tracking-tight">
-              Scale Your <GradientText className="text-gradient">Operations</GradientText>
+          <FadeInSection className="text-center mb-24">
+            <h2 className="text-4xl md:text-6xl font-display font-extrabold mb-6 tracking-tight">
+              Engineered for <GradientText className="text-gradient">Scale.</GradientText>
             </h2>
-            <p className="text-white/60 text-xl max-w-2xl mx-auto">
-              Simple, high-scale pricing tailored for modern AI teams.
+            <p className="text-white/50 text-xl max-w-2xl mx-auto font-light">
+              Simple, high-scale pricing tailored for professional AI teams.
             </p>
           </FadeInSection>
 
@@ -253,31 +229,34 @@ export default function LandingPage() {
               <ScaleReveal key={i} delay={i * 0.1}>
                 <GlassCard
                   variant={plan.featured ? 'strong' : 'medium'}
-                  className={`p-10 relative overflow-hidden group ${plan.featured ? 'ring-2 ring-accent-purple/50' : ''}`}
+                  className={`p-10 relative overflow-hidden group border-white/5 ${plan.featured ? 'ring-1 ring-accent-purple/50' : ''}`}
                   hover
                 >
                   {plan.featured && (
-                    <div className="absolute top-0 right-0 bg-accent-purple text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-bl-lg">
+                    <div className="absolute top-0 right-0 bg-accent-purple text-white text-[10px] font-bold uppercase tracking-widest px-4 py-1.5 rounded-bl-xl">
                       Most Popular
                     </div>
                   )}
-                  <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
-                  <div className="flex items-baseline gap-2 mb-8">
-                    <span className="text-5xl font-extrabold text-white">${plan.price}</span>
-                    <span className="text-white/40 font-medium">/month</span>
+                  <h3 className="text-xl font-bold mb-2 uppercase tracking-widest text-white/60">{plan.name}</h3>
+                  <div className="flex items-baseline gap-2 mb-10">
+                    <span className="text-6xl font-display font-extrabold text-white">${plan.price}</span>
+                    <span className="text-white/40 font-medium">/mo</span>
                   </div>
-                  <ul className="space-y-4 mb-10">
+                  <ul className="space-y-6 mb-12">
                     {plan.features.map((feature, j) => (
-                      <li key={j} className="text-white/70 flex items-center gap-3">
-                        <div className="w-5 h-5 rounded-full bg-accent-purple/20 flex items-center justify-center flex-shrink-0">
-                          <span className="text-accent-purple text-xs">✓</span>
+                      <li key={j} className="text-white/60 flex items-center gap-4">
+                        <div className="w-5 h-5 rounded-full bg-accent-purple/10 flex items-center justify-center flex-shrink-0">
+                          <Zap className="text-accent-purple w-3 h-3 fill-accent-purple" />
                         </div>
-                        <span className="text-sm">{feature}</span>
+                        <span className="text-sm font-medium">{feature}</span>
                       </li>
                     ))}
                   </ul>
-                  <Button variant={plan.featured ? 'primary' : 'secondary'} className="w-full py-4 text-sm font-bold uppercase tracking-widest">
-                    Start Building Now
+                  <Button 
+                    variant={plan.featured ? 'primary' : 'secondary'} 
+                    className={`w-full h-14 font-bold uppercase tracking-widest text-[11px] ${!plan.featured ? 'border-white/5 hover:bg-white/5' : ''}`}
+                  >
+                    Select Plan
                   </Button>
                 </GlassCard>
               </ScaleReveal>
@@ -286,19 +265,40 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* CTA Section */}
+      <section className="py-40 px-6">
+         <div className="max-w-5xl mx-auto">
+            <GlassCard className="p-20 text-center relative overflow-hidden border-accent-purple/20 bg-accent-purple/[0.03]">
+               <div className="absolute inset-0 bg-gradient-to-br from-accent-purple/10 to-transparent opacity-50" />
+               <div className="relative z-10 space-y-8">
+                  <h2 className="text-5xl md:text-7xl font-display font-extrabold tracking-tight">Ready to build?</h2>
+                  <p className="text-white/50 text-xl font-light max-w-lg mx-auto leading-relaxed">
+                     Join the future of conversational AI. Start your 14-day free trial today.
+                  </p>
+                  <Link href="/signup">
+                    <Button size="lg" className="h-16 px-12 text-lg font-bold rounded-2xl group">
+                       Get Started
+                       <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                    </Button>
+                  </Link>
+               </div>
+            </GlassCard>
+         </div>
+      </section>
+
       {/* Footer */}
       <footer className="border-t border-white/5 py-32 px-6">
         <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-4 gap-20 mb-20">
+          <div className="grid md:grid-cols-4 gap-20 mb-24">
             <div className="col-span-2">
-              <h3 className="text-3xl font-extrabold mb-8"><GradientText className="text-gradient">VoiceBuild</GradientText></h3>
-              <p className="text-white/40 text-lg max-w-sm">
+              <h3 className="text-3xl font-display font-extrabold mb-8"><GradientText>VoiceBuild</GradientText></h3>
+              <p className="text-white/40 text-lg max-w-sm font-light">
                 The most advanced platform for building next-generation conversational AI experiences.
               </p>
             </div>
             <div>
-              <h4 className="text-white font-bold mb-6 uppercase tracking-widest text-xs">Product</h4>
-              <ul className="space-y-4 text-white/40 text-sm">
+              <h4 className="text-white font-bold mb-8 uppercase tracking-[0.2em] text-[10px]">Product</h4>
+              <ul className="space-y-4 text-white/40 text-[13px] font-medium">
                 <li><a href="#" className="hover:text-white transition-colors">Features</a></li>
                 <li><a href="#" className="hover:text-white transition-colors">Builder</a></li>
                 <li><a href="#" className="hover:text-white transition-colors">Analytics</a></li>
@@ -306,8 +306,8 @@ export default function LandingPage() {
               </ul>
             </div>
             <div>
-              <h4 className="text-white font-bold mb-6 uppercase tracking-widest text-xs">Company</h4>
-              <ul className="space-y-4 text-white/40 text-sm">
+              <h4 className="text-white font-bold mb-8 uppercase tracking-[0.2em] text-[10px]">Company</h4>
+              <ul className="space-y-4 text-white/40 text-[13px] font-medium">
                 <li><a href="#" className="hover:text-white transition-colors">About</a></li>
                 <li><a href="#" className="hover:text-white transition-colors">Careers</a></li>
                 <li><a href="#" className="hover:text-white transition-colors">Security</a></li>
@@ -315,11 +315,11 @@ export default function LandingPage() {
               </ul>
             </div>
           </div>
-          <div className="pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
-             <p className="text-white/20 text-xs tracking-widest uppercase font-medium">© 2026 VoiceBuild OS. Built for visual excellence.</p>
-             <div className="flex gap-8">
-                {['Twitter', 'GitHub', 'Discord'].map(social => (
-                  <a key={social} href="#" className="text-white/20 hover:text-white transition-colors text-xs font-bold uppercase tracking-widest">{social}</a>
+          <div className="pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8">
+             <p className="text-white/20 text-[10px] tracking-[0.3em] uppercase font-bold">© 2026 VoiceBuild OS. Visual Excellence Guaranteed.</p>
+             <div className="flex gap-10">
+                {['Twitter', 'GitHub', 'LinkedIn'].map(social => (
+                  <a key={social} href="#" className="text-white/20 hover:text-white transition-colors text-[10px] font-bold uppercase tracking-[0.2em]">{social}</a>
                 ))}
              </div>
           </div>
@@ -330,31 +330,31 @@ export default function LandingPage() {
 }
 
 const features = [
-  { icon: '🎤', title: 'Voice Intelligence', description: 'Natural language understanding powered by advanced AI' },
-  { icon: '⚡', title: 'Lightning Fast', description: 'Deploy agents in seconds, scale instantly' },
-  { icon: '🔗', title: 'Integrations', description: 'Connect to your favorite tools and platforms' },
-  { icon: '📊', title: 'Analytics', description: 'Real-time insights into agent performance' },
-  { icon: '🛡️', title: 'Enterprise Ready', description: 'Security, compliance, and reliability' },
-  { icon: '🤝', title: 'Team Collaboration', description: 'Build together with your team' },
+  { icon: Mic, title: 'Voice Intelligence', description: 'Advanced speech processing powered by world-class AI models.' },
+  { icon: Zap, title: 'Lightning Fast', description: 'Real-time inference and deployment at the edge for zero latency.' },
+  { icon: LinkIcon, title: 'Deep Integrations', description: 'Connect seamlessly with your existing enterprise stack and data.' },
+  { icon: BarChart3, title: 'Rich Analytics', description: 'Comprehensive insights into every interaction and performance metric.' },
+  { icon: ShieldCheck, title: 'Enterprise Ready', description: 'Military-grade security and SOC2 compliance built-in.' },
+  { icon: Users, title: 'Team Scale', description: 'Collaborative workspaces designed for high-velocity development.' },
 ];
 
 const pricingPlans = [
   {
     name: 'Starter',
-    price: '29',
+    price: '49',
     featured: false,
-    features: ['Up to 3 agents', '1,000 calls/month', 'Basic analytics', 'Email support'],
+    features: ['3 Intelligent Agents', '5,000 monthly minutes', 'Core API access', 'Community support'],
   },
   {
-    name: 'Pro',
-    price: '99',
+    name: 'Business',
+    price: '199',
     featured: true,
-    features: ['Unlimited agents', '100,000 calls/month', 'Advanced analytics', 'Priority support', 'API access'],
+    features: ['Unlimited Agents', '50,000 monthly minutes', 'Priority GPU nodes', 'Dedicated support', 'Custom knowledge bases'],
   },
   {
     name: 'Enterprise',
-    price: 'Custom',
+    price: '999',
     featured: false,
-    features: ['Custom limits', 'Dedicated support', 'SLA guarantee', 'Custom integrations'],
+    features: ['Infinite scalability', 'Unlimited everything', 'On-premise deployment', '24/7 dedicated engineering team'],
   },
 ];
