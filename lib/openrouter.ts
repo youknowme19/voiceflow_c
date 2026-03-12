@@ -1,5 +1,3 @@
-import fetch from "node-fetch";
-
 const OPENROUTER_URL = "https://api.openrouter.ai/v1";
 const apiKey = process.env.OPENROUTER_API_KEY;
 

@@ -1,11 +1,10 @@
 'use client';
 
-import Link from "next/link";
-import { motion } from "framer-motion";
-import { useState } from "react";
+import LandingPage from './landing';
 
 export default function Home() {
-  const [isDark, setIsDark] = useState(true);
+  return <LandingPage />;
+}
 
   const fadeInUp = {
     initial: { opacity: 0, y: 20 },

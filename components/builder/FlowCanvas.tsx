@@ -111,7 +111,7 @@ const FlowCanvas: React.FC<FlowCanvasProps> = ({ agentId }) => {
   };
 
   return (
-    <div className="flex-1">
+    <div className="flex-1 relative group h-full">
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -121,17 +121,37 @@ const FlowCanvas: React.FC<FlowCanvasProps> = ({ agentId }) => {
         onNodeClick={(_, node) => setSelectedNode(node)}
         onPaneClick={() => setSelectedNode(null)}
         fitView
+        className="bg-[#0B0B0F]"
+        snapToGrid
+        snapGrid={[20, 20]}
       >
-        <Background />
-        <Controls />
-        <MiniMap />
+        <Background 
+          color="#1A1A24" 
+          gap={20} 
+          size={1} 
+          className="opacity-50"
+        />
+        <Controls className="bg-white/5 border-white/10 rounded-xl overflow-hidden premium-blur" />
+        <MiniMap 
+          className="bg-white/5 border border-white/10 rounded-xl overflow-hidden premium-blur"
+          maskColor="rgba(0,0,0,0.5)"
+          nodeColor="#6C63FF"
+        />
       </ReactFlow>
-      <button
-        onClick={saveFlow}
-        className="absolute top-4 right-4 z-10 bg-indigo-600 text-white px-4 py-2 rounded"
-      >
-        Save
-      </button>
+      
+      {/* Premium Actions */}
+      <div className="absolute top-6 right-6 z-10 flex gap-4">
+        <button
+          onClick={saveFlow}
+          className="px-6 py-2.5 rounded-xl bg-accent-purple text-white font-bold text-sm tracking-widest uppercase hover:shadow-glow-purple transition-all active:scale-95 flex items-center gap-2"
+        >
+          <span>💾</span>
+          <span>Deploy Changes</span>
+        </button>
+      </div>
+
+      {/* Grid Overlay for depth */}
+      <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-accent-purple/5 via-transparent to-transparent opacity-30" />
     </div>
   );
 };
