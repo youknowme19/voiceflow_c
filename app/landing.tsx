@@ -71,7 +71,7 @@ export default function LandingPage() {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center px-6 pt-32 pb-20 overflow-hidden">
+      <section className="relative min-h-screen flex items-center justify-center px-6 pt-32 pb-20">
         <div className="max-w-6xl mx-auto text-center relative z-10">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
@@ -123,7 +123,7 @@ export default function LandingPage() {
       </section>
 
       {/* Feature Grid */}
-      <section id="features" className="relative py-40 px-6 overflow-hidden">
+      <section id="features" className="relative py-40 px-6">
         <div className="max-w-7xl mx-auto">
           <FadeInSection className="text-center mb-24">
             <h2 className="text-4xl md:text-6xl font-display font-extrabold mb-6 tracking-tight">

@@ -54,7 +54,7 @@ export default function BuilderUIPreview() {
   }, []);
 
   return (
-    <section className="py-32 relative overflow-hidden bg-[#070709]">
+    <section className="py-32 relative bg-[#070709]">
       <div className="container mx-auto px-6">
         <div className="grid lg:grid-cols-2 gap-20 items-center">
           <div className="space-y-8">
@@ -149,7 +149,7 @@ export default function BuilderUIPreview() {
                 </div>
 
                 {/* Main Workspace - Pipeline view */}
-                <div className="flex-1 bg-[#070709] p-10 overflow-auto scrollbar-none relative">
+                <div className="flex-1 bg-[#070709] p-10 overflow-y-auto scrollbar-none relative">
                    {/* Centered Structured Pipeline */}
                    <div className="max-w-md mx-auto space-y-6">
                       <AnimatePresence>

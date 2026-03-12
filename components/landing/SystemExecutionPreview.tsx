@@ -81,12 +81,16 @@ export default function SystemExecutionPreview() {
     runSimulation();
   }, []);
 
+  const consoleContainerRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
-    consoleEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (consoleContainerRef.current) {
+      consoleContainerRef.current.scrollTop = consoleContainerRef.current.scrollHeight;
+    }
   }, [logs]);
 
   return (
-    <section className="py-32 relative overflow-hidden bg-[#070709]">
+    <section className="py-32 relative bg-[#070709]">
       <div className="container mx-auto px-6">
          <div className="text-center max-w-2xl mx-auto mb-20 space-y-6">
             <motion.div
@@ -104,7 +108,7 @@ export default function SystemExecutionPreview() {
             </p>
          </div>
 
-        <div className="grid lg:grid-cols-2 gap-8 h-[600px]">
+        <div className="grid lg:grid-cols-2 gap-8 min-h-[600px]">
           {/* Left Side: Modular Status Cards */}
           <div className="flex flex-col gap-3 h-full">
             {STAGES.map((stage, i) => (
@@ -158,7 +162,10 @@ export default function SystemExecutionPreview() {
                </div>
             </div>
 
-            <div className="flex-1 p-8 font-mono text-[13px] leading-relaxed overflow-y-auto scrollbar-none flex flex-col gap-2">
+            <div 
+              ref={consoleContainerRef}
+              className="flex-1 p-8 font-mono text-[13px] leading-relaxed overflow-y-auto scrollbar-none flex flex-col gap-2"
+            >
                <div className="space-y-3">
                   {logs.map((log, i) => (
                     <div key={i} className={log.includes('detected') ? 'text-accent-cyan font-bold' : log.includes('complete') ? 'text-emerald-500 font-bold' : 'text-white/60'}>
@@ -172,7 +179,6 @@ export default function SystemExecutionPreview() {
                       className="inline-block w-2 h-4 bg-accent-purple ml-1 translate-y-1"
                     />
                   )}
-                  <div ref={consoleEndRef} />
                </div>
             </div>
 

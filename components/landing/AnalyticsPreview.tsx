@@ -21,7 +21,7 @@ const LOG_ENTRIES = [
 
 export default function AnalyticsPreview() {
   return (
-    <section className="py-40 relative overflow-hidden bg-[#0A0A0F]">
+    <section className="py-40 relative bg-[#0A0A0F]">
        <div className="container mx-auto px-6">
           <div className="grid lg:grid-cols-2 gap-20 items-center">
              <div className="space-y-12">

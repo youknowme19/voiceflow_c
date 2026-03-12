@@ -65,7 +65,7 @@ export default function WorkflowExecutionDemo() {
   }, []);
 
   return (
-    <section className="py-32 relative overflow-hidden bg-[#070709]">
+    <section className="py-32 relative bg-[#070709]">
       <div className="container mx-auto px-6">
         <div className="grid lg:grid-cols-2 gap-20 items-center">
           {/* Left Side: Real Chat UI Frame */}
