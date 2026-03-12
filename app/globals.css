@@ -11,6 +11,10 @@
   --color-accent-purple: #6C63FF;
   --color-accent-cyan: #00D4FF;
   --color-accent-pink: #FF6B9D;
+  --shadow-glass-md: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  --shadow-glass-lg: 0 12px 48px 0 rgba(0, 0, 0, 0.5);
+  --shadow-glow-purple: 0 0 20px rgba(108, 99, 255, 0.3);
+  --shadow-glow-cyan: 0 0 20px rgba(0, 212, 255, 0.3);
 }
 
 :root {
