@@ -25,7 +25,8 @@ import {
 
 import SystemExecutionPreview from '@/components/landing/SystemExecutionPreview';
 import BuilderUIPreview from '@/components/landing/BuilderUIPreview';
-import ScenarioSimulation from '@/components/landing/ScenarioSimulation';
+import WorkflowExecutionDemo from '@/components/landing/WorkflowExecutionDemo';
+import AnalyticsPreview from '@/components/landing/AnalyticsPreview';
 
 export default function LandingPage() {
   return (
@@ -109,7 +110,7 @@ export default function LandingPage() {
             transition={{ duration: 0.7, delay: 0.3 }}
           >
             <Link href="/dashboard">
-              <Button size="lg" className="rounded-2xl group px-10 h-16 text-lg tracking-wide">
+              <Button size="lg" className="rounded-2xl group px-10 h-16 text-lg tracking-wide shadow-glow-purple">
                 Start Building Now
                 <ChevronRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
               </Button>
@@ -153,63 +154,17 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Scenario Simulation (Replaces "Build workflows that actually work") */}
-      <ScenarioSimulation />
+      {/* Workflow Execution Demo (Replaces abstract scenario) */}
+      <WorkflowExecutionDemo />
 
-      {/* Builder UI Preview (Replaces "Design like a pro, no code required") */}
+      {/* Builder UI Preview (Replaces diagram-style builder) */}
       <BuilderUIPreview />
 
-      {/* System Execution Preview (Replaces "See the magic in action") */}
+      {/* System Execution Preview (Replaces pipeline diagram) */}
       <SystemExecutionPreview />
 
-      {/* Analytics Preview */}
-      <section className="py-40 relative overflow-hidden bg-[#0A0A0F]">
-        <div className="container mx-auto px-6">
-          <div className="grid lg:grid-cols-2 gap-20 items-center">
-             <FadeInSection>
-                <h2 className="text-4xl md:text-6xl font-display font-extrabold mb-8 tracking-tight leading-tight">
-                  Real-time <br />
-                  <GradientText className="text-gradient">Intelligence.</GradientText>
-                </h2>
-                <p className="text-white/50 mb-10 text-xl font-light leading-relaxed">
-                  Track every conversation, monitor response times, and optimize your flows with our built-in analytics dashboard.
-                </p>
-                <div className="grid grid-cols-2 gap-8">
-                   {[
-                     { label: 'Avg Latency', val: '< 200ms' },
-                     { label: 'Success Rate', val: '99.9%' },
-                     { label: 'Active Users', val: '2M+' },
-                     { label: 'API Uptime', val: '99.99%' },
-                   ].map(stat => (
-                     <div key={stat.label}>
-                       <p className="text-[11px] font-bold uppercase tracking-widest text-white/30 mb-1">{stat.label}</p>
-                       <p className="text-2xl font-display font-bold text-white">{stat.val}</p>
-                     </div>
-                   ))}
-                </div>
-             </FadeInSection>
-             <ScaleReveal delay={0.2} className="relative">
-                <GlassCard className="aspect-[4/3] p-8 border-white/5 overflow-hidden">
-                   <div className="absolute inset-0 bg-gradient-to-br from-accent-purple/10 to-transparent flex items-center justify-center">
-                      <BarChart3 className="w-40 h-40 text-accent-purple opacity-20" />
-                   </div>
-                   <div className="space-y-4">
-                      {[1,2,3,4].map(i => (
-                        <div key={i} className="h-4 bg-white/5 rounded-full w-full relative overflow-hidden">
-                           <motion.div 
-                             initial={{ width: 0 }}
-                             whileInView={{ width: ['0%', '40%', '80%', '60%'][i-1] }}
-                             transition={{ duration: 1.5, delay: 0.5 + (i*0.2) }}
-                             className={`absolute inset-0 bg-gradient-to-r ${['from-accent-purple', 'from-accent-cyan', 'from-accent-pink', 'from-accent-purple'][i-1]} to-transparent opacity-50`} 
-                           />
-                        </div>
-                      ))}
-                   </div>
-                </GlassCard>
-             </ScaleReveal>
-          </div>
-        </div>
-      </section>
+      {/* Analytics Preview (Replaces static loading block) */}
+      <AnalyticsPreview />
 
       {/* Pricing Section */}
       <section id="pricing" className="relative py-40 px-6">
@@ -264,22 +219,30 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* CTA Section */}
+      {/* Centered CTA Section */}
       <section className="py-40 px-6">
          <div className="max-w-5xl mx-auto">
-            <GlassCard className="p-20 text-center relative overflow-hidden border-accent-purple/20 bg-accent-purple/[0.03]">
+            <GlassCard className="p-24 text-center relative overflow-hidden border-accent-purple/20 bg-accent-purple/[0.03]">
                <div className="absolute inset-0 bg-gradient-to-br from-accent-purple/10 to-transparent opacity-50" />
-               <div className="relative z-10 space-y-8">
-                  <h2 className="text-5xl md:text-7xl font-display font-extrabold tracking-tight">Ready to build?</h2>
-                  <p className="text-white/50 text-xl font-light max-w-lg mx-auto leading-relaxed">
-                     Join the future of conversational AI. Start your 14-day free trial today.
+               <div className="relative z-10 space-y-10 max-w-2xl mx-auto items-center flex flex-col">
+                  <h2 className="text-5xl md:text-7xl font-display font-extrabold tracking-tight leading-tight">Ready to build?</h2>
+                  <p className="text-white/40 text-xl font-light leading-relaxed">
+                     Join the future of conversational AI and start shipping production-grade agents in minutes.
                   </p>
-                  <Link href="/signup">
-                    <Button size="lg" className="h-16 px-12 text-lg font-bold rounded-2xl group">
-                       Get Started
-                       <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
-                    </Button>
-                  </Link>
+                  <div className="flex flex-col items-center gap-6">
+                    <Link href="/signup">
+                      <Button size="lg" className="h-16 px-12 text-lg font-bold rounded-2xl group shadow-glow-purple relative overflow-hidden">
+                         <span className="relative z-10 flex items-center">
+                            Get Started for Free
+                            <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                         </span>
+                         <motion.div 
+                           className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" 
+                         />
+                      </Button>
+                    </Link>
+                    <p className="text-[10px] font-bold text-white/20 uppercase tracking-[0.3em]">No credit card required • 14-day free trial</p>
+                  </div>
                </div>
             </GlassCard>
          </div>
