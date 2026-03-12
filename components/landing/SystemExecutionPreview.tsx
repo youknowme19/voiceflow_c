@@ -1,197 +1,210 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Terminal, Cpu, Database, Globe, Play, CheckCircle2, MessageSquare, Shield, ChevronRight } from 'lucide-react';
+import { motion, AnimatePresence, useInView } from 'framer-motion';
+import { 
+  Terminal, 
+  Cpu, 
+  Database, 
+  Globe, 
+  Play, 
+  CheckCircle2, 
+  MessageSquare, 
+  ShieldCheck, 
+  ChevronRight,
+  Activity,
+  Zap,
+  Layout
+} from 'lucide-react';
+import { Reveal } from '@/components/premium/PremiumUI';
 
-const STAGES = [
-  { id: 'start', label: 'Trigger', icon: MessageSquare, color: 'text-blue-400', bg: 'bg-blue-400/10' },
-  { id: 'input', label: 'Validation', icon: Shield, color: 'text-indigo-400', bg: 'bg-indigo-400/10' },
-  { id: 'ai', label: 'AI Engine', icon: Cpu, color: 'text-purple-400', bg: 'bg-purple-400/10' },
-  { id: 'kb', label: 'Knowledge', icon: Database, color: 'text-cyan-400', bg: 'bg-cyan-400/10' },
-  { id: 'api', label: 'Integrate', icon: Globe, color: 'text-amber-400', bg: 'bg-amber-400/10' },
-  { id: 'end', label: 'Success', icon: CheckCircle2, color: 'text-emerald-400', bg: 'bg-emerald-400/10' },
+interface Log {
+  time: string;
+  msg: string;
+  type: 'info' | 'success' | 'warning';
+}
+
+const SYSTEM_LOGS: Log[] = [
+  { time: '10:24:01', msg: 'System initialization sequence initiated...', type: 'info' },
+  { time: '10:24:02', msg: 'Validating security handshake [AES-256]', type: 'info' },
+  { time: '10:24:03', msg: 'Network cluster [US-EAST] online', type: 'success' },
+  { time: '10:24:04', msg: 'Request intercepted: Process #99182', type: 'info' },
+  { time: '10:24:05', msg: 'AI Reasoning Layer: Mapping user intent', type: 'info' },
+  { time: '10:24:06', msg: 'Vector database lookup return 4 matches', type: 'info' },
+  { time: '10:24:07', msg: 'Executing external API bridge...', type: 'warning' },
+  { time: '10:24:08', msg: 'Response received: 200 OK Status', type: 'success' },
+  { time: '10:24:09', msg: 'Pipeline execution complete [12.4ms]', type: 'success' },
 ];
 
 export default function SystemExecutionPreview() {
-  const [activeStage, setActiveStage] = useState<number>(-1);
-  const [logs, setLogs] = useState<string[]>([]);
-  const [isRunning, setIsRunning] = useState(false);
-  const consoleEndRef = useRef<HTMLDivElement>(null);
-
-  const rawLogs = [
-    "Initializing secure session...",
-    "Incoming request detected: 'Track #5521'",
-    "Sanitizing input payload",
-    "Requesting GPT-4o context",
-    "Analyzing intent... Result: LOGISTICS",
-    "Querying Vector Database (Pinecone)",
-    "RAG Context retrieved: 3 snippets",
-    "Calling FedEx Production API",
-    "API Response: 200 OK | Transit",
-    "Generating natural language output",
-    "Execution cycle complete. 182ms"
-  ];
-
-  const runSimulation = async () => {
-    if (isRunning) return;
-    setIsRunning(true);
-    setLogs([]);
-    setActiveStage(-1);
-
-    const steps = [
-      { logIdx: 0, delay: 600 },
-      { logIdx: 1, delay: 500, stage: 0 },
-      { logIdx: 2, delay: 400, stage: 1 },
-      { logIdx: 3, delay: 800 },
-      { logIdx: 4, delay: 600, stage: 2 },
-      { logIdx: 5, delay: 700 },
-      { logIdx: 6, delay: 500, stage: 3 },
-      { logIdx: 7, delay: 1000, stage: 4 },
-      { logIdx: 8, delay: 400 },
-      { logIdx: 9, delay: 800 },
-      { logIdx: 10, delay: 400, stage: 5 },
-    ];
-
-    for (const step of steps) {
-      if (step.stage !== undefined) setActiveStage(step.stage);
-      
-      // Typewriter effect for log
-      const fullLog = `> ${rawLogs[step.logIdx]}`;
-      setLogs(prev => [...prev, ""]); 
-      
-      for (let i = 0; i <= fullLog.length; i++) {
-        setLogs(prev => {
-          const newLogs = [...prev];
-          newLogs[newLogs.length - 1] = fullLog.substring(0, i);
-          return newLogs;
-        });
-        await new Promise(r => setTimeout(r, 15));
-      }
-
-      await new Promise(r => setTimeout(r, step.delay));
-    }
-
-    setIsRunning(false);
-    await new Promise(r => setTimeout(r, 4000));
-    runSimulation();
-  };
+  const [logs, setLogs] = useState<Log[]>([]);
+  const logContainerRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef(null);
+  const isInView = useInView(sectionRef, { amount: 0.2 });
 
   useEffect(() => {
-    runSimulation();
+    let currentIdx = 0;
+    const interval = setInterval(() => {
+      setLogs(prev => {
+        const nextLogs = [...prev, SYSTEM_LOGS[currentIdx % SYSTEM_LOGS.length]];
+        return nextLogs.slice(-50); // Keep only last 50 logs
+      });
+      currentIdx++;
+      
+      if (logContainerRef.current) {
+        const { scrollHeight, clientHeight } = logContainerRef.current;
+        logContainerRef.current.scrollTo({
+          top: scrollHeight - clientHeight,
+          behavior: 'smooth'
+        });
+      }
+    }, 2000);
+
+    return () => clearInterval(interval);
   }, []);
 
-  const consoleContainerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (consoleContainerRef.current) {
-      consoleContainerRef.current.scrollTop = consoleContainerRef.current.scrollHeight;
-    }
-  }, [logs]);
-
   return (
-    <section className="py-32 relative bg-[#070709]">
+    <section ref={sectionRef} className="section-spacing relative bg-[#070709] overflow-hidden">
       <div className="container mx-auto px-6">
-         <div className="text-center max-w-2xl mx-auto mb-20 space-y-6">
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent-cyan/10 border border-accent-cyan/20 text-accent-cyan text-[10px] font-bold uppercase tracking-widest px-4"
-            >
-              Backend Performance
-            </motion.div>
-            <h2 className="text-4xl md:text-5xl font-display font-extrabold tracking-tight">
-              See the <span className="text-gradient">magic in action.</span>
-            </h2>
-            <p className="text-lg text-white/40 leading-relaxed font-light">
-              No diagrams. No abstractions. Watch our system process enterprise-level requests through a high-performance horizontal pipeline in real-time.
-            </p>
-         </div>
+        <div className="grid lg:grid-cols-2 gap-20 items-center">
+          {/* Visual: System Execution Console (Left) - Rhythm A */}
+          <div className="space-y-6">
+            <Reveal direction="right">
+               {/* High-Precision Metrics Graph */}
+               <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-6 mb-6 overflow-hidden relative">
+                  <div className="flex justify-between items-center mb-6">
+                     <div className="flex items-center gap-3">
+                        <Activity className="w-4 h-4 text-accent-cyan" />
+                        <span className="text-[10px] font-bold text-white uppercase tracking-[0.2em]">Compute Infrastructure</span>
+                     </div>
+                     <div className="flex gap-4">
+                        {[
+                          { label: 'CPU', color: '#F59E0B' },
+                          { label: 'MEM', color: '#F97316' },
+                          { label: 'NET', color: '#EF4444' }
+                        ].map(s => (
+                          <div key={s.label} className="flex items-center gap-2">
+                            <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: s.color }} />
+                            <span className="text-[8px] font-bold text-white/30 uppercase">{s.label}</span>
+                          </div>
+                        ))}
+                     </div>
+                  </div>
+                  
+                  <div className="h-24 w-full relative">
+                    <svg className="w-full h-full" viewBox="0 0 400 100" preserveAspectRatio="none">
+                      {/* Grid lines */}
+                      {[0, 25, 50, 75, 100].map(y => (
+                        <line key={y} x1="0" y1={y} x2="400" y2={y} stroke="white" strokeOpacity="0.03" strokeWidth="0.5" />
+                      ))}
+                      
+                      {/* 3 Animated Lines */}
+                      {[
+                        { color: '#F59E0B', delay: 0, d: "M0,50 Q100,20 200,50 T400,50" },
+                        { color: '#F97316', delay: 0.3, d: "M0,60 Q100,40 200,60 T400,60" },
+                        { color: '#EF4444', delay: 0.6, d: "M0,70 Q100,80 200,70 T400,70" }
+                      ].map((line, i) => (
+                        <motion.path
+                          key={i}
+                          d={line.d}
+                          fill="none"
+                          stroke={line.color}
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                          initial={{ pathLength: 0, opacity: 0 }}
+                          animate={isInView ? {
+                            pathLength: 1,
+                            opacity: 1
+                          } : { 
+                            pathLength: 0, 
+                            opacity: 0 
+                          }}
+                          transition={{
+                            duration: 2,
+                            ease: "easeOut",
+                            delay: line.delay
+                          }}
+                          className="drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]"
+                        />
+                      ))}
+                    </svg>
+                  </div>
+               </div>
 
-        <div className="grid lg:grid-cols-2 gap-8 min-h-[600px]">
-          {/* Left Side: Modular Status Cards */}
-          <div className="flex flex-col gap-3 h-full">
-            {STAGES.map((stage, i) => (
-              <motion.div
-                key={stage.id}
-                animate={{
-                  backgroundColor: activeStage === i ? 'rgba(255, 255, 255, 0.04)' : 'rgba(255, 255, 255, 0.01)',
-                  borderColor: activeStage === i ? 'rgba(108, 99, 255, 0.3)' : 'rgba(255, 255, 255, 0.05)',
-                  scale: activeStage === i ? 1.02 : 1,
-                }}
-                className="flex-1 flex items-center px-8 rounded-2xl border transition-all duration-300 relative overflow-hidden"
-              >
-                 {activeStage === i && (
-                   <motion.div 
-                     layoutId="stage-glow"
-                     className="absolute inset-0 bg-gradient-to-r from-accent-purple/5 to-transparent pointer-events-none" 
-                   />
-                 )}
-                 <div className="flex items-center gap-6 relative z-10 w-full">
-                    <div className={`p-3 rounded-xl bg-white/5 border border-white/5 ${activeStage === i ? stage.color : 'text-white/20'}`}>
-                       <stage.icon className="w-5 h-5" />
-                    </div>
-                    <div>
-                       <p className="text-[10px] font-bold text-white/20 uppercase tracking-[0.2em] mb-0.5">Stage {i + 1}</p>
-                       <p className={`text-sm font-bold uppercase tracking-tight transition-colors ${activeStage === i ? 'text-white' : 'text-white/20'}`}>
-                          {stage.label}
-                       </p>
-                    </div>
-                    {activeStage === i && (
-                      <div className="ml-auto flex items-center gap-3">
-                         <span className="text-[10px] font-bold text-accent-purple uppercase tracking-[0.2em] animate-pulse">Running</span>
-                         <div className="w-1.5 h-1.5 rounded-full bg-accent-purple shadow-glow-purple" />
-                      </div>
-                    )}
-                 </div>
-              </motion.div>
-            ))}
+               {/* Constrained Console */}
+               <div className="bg-[#0B0B0F] rounded-2xl border border-white/10 shadow-2xl overflow-hidden flex flex-col relative z-20 group">
+                {/* Header */}
+                <div className="h-12 border-b border-white/5 bg-white/[0.02] flex items-center justify-between px-6 shrink-0">
+                  <div className="flex items-center gap-4">
+                     <Terminal className="w-4 h-4 text-accent-cyan" />
+                     <span className="text-[10px] font-bold text-white/40 uppercase tracking-[0.3em]">Infrastructure Console</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                     <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                     <span className="text-[9px] font-bold text-emerald-500/80 uppercase tracking-widest">Healthy</span>
+                  </div>
+                </div>
+
+                {/* Console Body */}
+                <div 
+                  ref={logContainerRef}
+                  className="h-[320px] bg-[#070709] p-6 font-mono text-[10px] overflow-y-auto space-y-3 scrollbar-none"
+                >
+                  {logs.slice(-50).map((log, i) => (
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, x: -5 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      className="flex gap-4 border-l border-white/10 pl-4 py-0.5"
+                    >
+                      <span className="text-white/20 shrink-0">[{log.time}]</span>
+                      <span className={log.type === 'info' ? 'text-accent-cyan/60' : log.type === 'success' ? 'text-emerald-500/60' : 'text-accent-pink/60'}>
+                        {log.msg}
+                      </span>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            </Reveal>
           </div>
 
-          {/* Right Side: Typewriter Execution Console */}
-          <div className="bg-[#0B0B0F] border border-white/10 rounded-3xl overflow-hidden flex flex-col shadow-[0_0_60px_rgba(0,0,0,0.6)] h-full">
-            <div className="bg-white/5 border-b border-white/5 px-6 py-4 flex items-center justify-between shrink-0">
-               <div className="flex items-center gap-3">
-                  <Terminal className="w-4 h-4 text-accent-purple" />
-                  <span className="text-[11px] font-bold uppercase tracking-widest text-white/50">Execution Console</span>
-               </div>
-               <div className="flex gap-1.5 opacity-20">
-                  <div className="w-2.5 h-2.5 rounded-full bg-white" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-white" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-white" />
-               </div>
-            </div>
+          {/* Text Content (Right) */}
+          <div className="space-y-8 lg:pl-12">
+            <Reveal direction="left">
+              <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-accent-cyan/5 border border-accent-cyan/20 text-accent-cyan text-[11px] font-bold uppercase tracking-[0.2em] mb-6">
+                System Health
+              </div>
+              <h2 className="text-3xl md:text-[36px] font-display font-extrabold tracking-tight mb-8 leading-[1.1]">
+                Infrastructure <br />
+                <span className="text-gradient">unleashed.</span>
+              </h2>
+              <p className="text-base md:text-lg text-white/40 font-light leading-relaxed max-w-xl">
+                Operate at the speed of thought. Our globally distributed network ensures ultra-low latency execution for every single AI agent you deploy.
+              </p>
+            </Reveal>
 
-            <div 
-              ref={consoleContainerRef}
-              className="flex-1 p-8 font-mono text-[13px] leading-relaxed overflow-y-auto scrollbar-none flex flex-col gap-2"
-            >
-               <div className="space-y-3">
-                  {logs.map((log, i) => (
-                    <div key={i} className={log.includes('detected') ? 'text-accent-cyan font-bold' : log.includes('complete') ? 'text-emerald-500 font-bold' : 'text-white/60'}>
-                       {log}
-                    </div>
-                  ))}
-                  {isRunning && (
-                    <motion.div
-                      animate={{ opacity: [0, 1, 0] }}
-                      transition={{ repeat: Infinity, duration: 0.8 }}
-                      className="inline-block w-2 h-4 bg-accent-purple ml-1 translate-y-1"
-                    />
-                  )}
-               </div>
-            </div>
-
-            {/* Bottom Bar */}
-            <div className="p-4 bg-white/[0.02] border-t border-white/5 flex items-center justify-between px-6 shrink-0">
-               <p className="text-[10px] font-bold text-white/20 uppercase tracking-widest">Status: {isRunning ? 'Processing...' : 'Ready'}</p>
-               <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest">99.9% Uptime</span>
-               </div>
+            {/* Discrete Stat Cards to avoid overlap */}
+            <div className="grid grid-cols-3 gap-4">
+               {[
+                 { label: 'Precision', value: '99.8%', icon: ShieldCheck },
+                 { label: 'Scale Index', value: '12.5k', icon: Activity, unit: 'TPS' },
+                 { label: 'Latency', value: '<200ms', icon: Zap }
+               ].map((stat, i) => (
+                 <Reveal key={i} direction="up" delay={0.2 + i * 0.1}>
+                   <div className="p-5 rounded-2xl border border-white/5 bg-white/[0.02] text-center">
+                      <p className="text-[10px] font-bold text-white/20 uppercase tracking-[0.2em] mb-2">{stat.label}</p>
+                      <p className="text-xl font-display font-bold text-white tracking-tight">
+                        {stat.value}
+                        {stat.unit && <span className="text-[8px] opacity-30 ml-0.5">{stat.unit}</span>}
+                      </p>
+                   </div>
+                 </Reveal>
+               ))}
             </div>
           </div>
         </div>
       </div>
     </section>
+
   );
 }

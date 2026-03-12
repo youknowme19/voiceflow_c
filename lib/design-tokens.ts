@@ -3,65 +3,65 @@ export const tokens = {
   // Colors - Premium Dark Theme
   colors: {
     background: {
-      primary: '#0B0B0F',
-      secondary: '#11111A',
-      tertiary: '#1A1A24',
-      hover: '#1F1F2E',
+      primary: '#070709',    // Deeper dark
+      secondary: '#0B0B0F',
+      tertiary: '#0F0F15',
+      hover: '#14141C',
     },
     glass: {
-      light: 'rgba(255, 255, 255, 0.05)',
-      medium: 'rgba(255, 255, 255, 0.08)',
-      strong: 'rgba(255, 255, 255, 0.12)',
+      light: 'rgba(255, 255, 255, 0.03)',
+      medium: 'rgba(255, 255, 255, 0.05)',
+      strong: 'rgba(255, 255, 255, 0.08)',
     },
     glassBorder: {
-      light: 'rgba(255, 255, 255, 0.08)',
-      medium: 'rgba(255, 255, 255, 0.12)',
-      strong: 'rgba(255, 255, 255, 0.2)',
+      light: 'rgba(255, 255, 255, 0.05)',
+      medium: 'rgba(255, 255, 255, 0.1)',
+      strong: 'rgba(255, 255, 255, 0.15)',
     },
     accent: {
       primary: '#6C63FF',    // Purple
       secondary: '#00D4FF',  // Cyan
       tertiary: '#FF6B9D',   // Pink
-      success: '#00D084',    // Green
-      warning: '#FFB84D',    // Orange
-      error: '#FF6B6B',      // Red
+      success: '#10B981',    // Emerald 500
+      warning: '#F59E0B',    // Amber 500
+      error: '#EF4444',      // Red 500
     },
     text: {
       primary: '#FFFFFF',
-      secondary: '#B8B8CC',
-      tertiary: '#808099',
-      disabled: '#5A5A70',
+      secondary: '#94A3B8',  // Slate 400
+      tertiary: '#64748B',   // Slate 500
+      disabled: '#475569',   // Slate 600
     },
-    border: '#2A2A3E',
+    border: 'rgba(255, 255, 255, 0.06)',
   },
 
   // Spacing - 4px base unit
   spacing: {
     xs: '4px',
     sm: '8px',
-    md: '12px',
-    lg: '16px',
-    xl: '24px',
-    xxl: '32px',
-    xxxl: '48px',
+    md: '12px',      // Slightly tighter
+    lg: '20px',      // Balanced
+    xl: '28px',
+    xxl: '48px',
+    xxxl: '96px',
+    giant: '80px',   // Normalized Section Spacing (down from 160)
   },
 
   // Typography
   typography: {
     fontFamily: {
-      base: 'system-ui, -apple-system, sans-serif',
-      display: '"Inter", system-ui, -apple-system, sans-serif',
+      base: '"Inter", system-ui, -apple-system, sans-serif',
+      display: '"Geist Sans", "Inter", system-ui, -apple-system, sans-serif',
     },
     fontSize: {
-      xs: '12px',
-      sm: '14px',
-      base: '16px',
-      lg: '18px',
-      xl: '20px',
-      '2xl': '24px',
-      '3xl': '32px',
-      '4xl': '48px',
-      '5xl': '64px',
+      xs: '12px',    // Smallest labels
+      sm: '14px',    // Small labels / meta
+      base: '15px',  // Body text
+      lg: '18px',    // Subheadings
+      xl: '24px',    // Small section headings
+      '2xl': '32px', // Section headlines
+      '3xl': '48px', // Hero secondary
+      '4xl': '56px', // Hero headline max
     },
     fontWeight: {
       normal: 400,
@@ -71,10 +71,10 @@ export const tokens = {
       extrabold: 800,
     },
     lineHeight: {
-      tight: 1.2,
+      tight: 1.1,
       normal: 1.5,
-      relaxed: 1.75,
-      loose: 2,
+      relaxed: 1.6,
+      loose: 1.8,
     },
   },
 

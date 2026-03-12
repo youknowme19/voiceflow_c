@@ -2,22 +2,29 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Plus, 
-  Search, 
-  Settings, 
-  MessageSquare, 
-  Bot, 
-  Zap, 
-  Globe, 
+import {
+  Plus,
+  Search,
+  Settings,
+  MessageSquare,
+  Bot,
+  Zap,
+  Globe,
   Play,
   Share2,
   ChevronRight,
   Layout,
-  Layers,
+  BarChart3,
   Activity,
+  Database,
+  ShieldCheck,
+  Split,
+  CheckCircle,
+  Layers,
   Box
 } from 'lucide-react';
+
+import { Reveal } from '@/components/premium/PremiumUI';
 
 const COMPONENTS = [
   { id: 'msg', label: 'Message', icon: MessageSquare, color: 'text-blue-400', bg: 'bg-blue-400/10', desc: 'Send text response' },
@@ -54,160 +61,153 @@ export default function BuilderUIPreview() {
   }, []);
 
   return (
-    <section className="py-32 relative bg-[#070709]">
-      <div className="container mx-auto px-6">
+    <section className="section-spacing relative bg-[#0B0B0F]">
+      <div className="container mx-auto px-6 text-center lg:text-left">
         <div className="grid lg:grid-cols-2 gap-20 items-center">
-          <div className="space-y-8">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent-purple/10 border border-accent-purple/20 text-accent-purple text-[10px] font-bold uppercase tracking-widest px-4"
-            >
-              Visual Logic
-            </motion.div>
-            <h2 className="text-4xl md:text-5xl font-display font-extrabold tracking-tight leading-tight">
-              A builder that feels <br />
-              <span className="text-gradient">like professional IDE.</span>
-            </h2>
-            <p className="text-lg text-white/50 leading-relaxed font-light max-w-lg">
-              Stop fighting with diagram lines. Our structured pipeline approach gives you the clarity of high-level logic with the precision of raw code.
-            </p>
+          {/* Text Content: (Left) - Rhythm B: Text Left / Visual Right */}
+          <div className="space-y-8 max-w-2xl mx-auto lg:mx-0">
+            <Reveal direction="right">
+              <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-accent-purple/5 border border-accent-purple/20 text-accent-purple text-[11px] font-bold uppercase tracking-[0.2em] mb-6">
+                Visual Orchestration
+              </div>
+              <h2 className="text-3xl md:text-[36px] font-display font-extrabold tracking-tight mb-8 leading-[1.1]">
+                Builder for <br />
+                <span className="text-gradient">Architects.</span>
+              </h2>
+              <p className="text-base md:text-lg text-white/40 font-light leading-relaxed">
+                Stop fighting with diagram lines. Our structured pipeline approach gives you the clarity of high-level logic with the precision of raw code.
+              </p>
+            </Reveal>
             
-            <div className="space-y-4 pt-4">
+            <div className="grid grid-cols-2 gap-6 pt-4">
                {[
-                 'Type-safe module connections',
-                 'Real-time dependency validation',
-                 'Versioned pipeline deployments',
-                 'Production-ready API bridging'
+                 'Type-safe connections',
+                 'Real-time validation',
+                 'Versioned deployments',
+                 'Internal API bridging'
                ].map((item, i) => (
-                 <div key={i} className="flex items-center gap-4 text-white/80 group">
-                    <div className="w-1.5 h-1.5 rounded-full bg-accent-purple group-hover:scale-150 transition-transform" />
-                    <span className="text-sm font-medium tracking-wide">{item}</span>
-                 </div>
+                 <Reveal key={i} direction="right" delay={0.2 + i * 0.1}>
+                   <div className="flex items-center gap-3 text-white/50 group">
+                      <div className="w-1.5 h-1.5 rounded-full bg-accent-purple shadow-[0_0_8px_rgba(108,99,255,0.5)]" />
+                      <span className="text-sm font-medium tracking-tight group-hover:text-white transition-colors">{item}</span>
+                   </div>
+                 </Reveal>
                ))}
             </div>
           </div>
 
-          <div className="relative">
-            {/* App UI Frame */}
-            <div className="bg-[#0B0B0F] rounded-3xl border border-white/10 shadow-[0_0_80px_rgba(0,0,0,0.8)] overflow-hidden aspect-[1.4/1] flex flex-col relative z-10 font-sans">
-              {/* Toolbar */}
-              <div className="h-14 border-b border-white/5 bg-white/[0.02] flex items-center justify-between px-6 shrink-0">
-                <div className="flex items-center gap-5">
-                   <div className="flex gap-1.5 opacity-30 grayscale items-center mr-4">
-                      <div className="w-2.5 h-2.5 rounded-full bg-red-500" />
-                      <div className="w-2.5 h-2.5 rounded-full bg-amber-500" />
-                      <div className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
-                   </div>
-                   <div className="flex gap-1 h-8 items-center bg-white/5 rounded-lg p-1">
-                      <button className={`px-3 py-1 text-[10px] font-bold uppercase rounded ${activeTab === 'logic' ? 'bg-white/10 text-white' : 'text-white/30'}`}>Logic</button>
-                      <button className="px-3 py-1 text-[10px] font-bold uppercase text-white/30">Data</button>
-                   </div>
+          {/* Visual: Laptop Preview (Right) */}
+          <Reveal direction="left" className="relative">
+            <div className="relative mx-auto w-full max-w-[600px]">
+              {/* Laptop Body */}
+              <div className="relative aspect-[16/10] bg-[#070709] rounded-2xl border-[8px] border-[#1A1A24] shadow-2xl overflow-hidden group">
+                <div className="absolute inset-x-0 top-0 h-6 bg-[#1A1A24] flex items-center px-4 gap-1.5">
+                  <div className="w-2 h-2 rounded-full bg-red-500/30" />
+                  <div className="w-2 h-2 rounded-full bg-amber-500/30" />
+                  <div className="w-2 h-2 rounded-full bg-emerald-500/30" />
                 </div>
-                <div className="flex items-center gap-3">
-                   <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center border border-white/5 hover:border-white/20 transition-colors">
-                      <Search className="w-3.5 h-3.5 text-white/40" />
-                   </div>
-                   <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center border border-white/5 hover:border-white/20 transition-colors">
-                      <Settings className="w-3.5 h-3.5 text-white/40" />
-                   </div>
-                   <div className="h-8 px-4 rounded-lg bg-white text-black text-[10px] font-bold uppercase tracking-widest flex items-center">
-                      Deploy
-                   </div>
-                </div>
-              </div>
+                
+                {/* Screen Content */}
+                <div className="absolute inset-0 top-6 flex bg-[#070709]">
+                  {/* Dashboard Sidebar */}
+                  <div className="w-32 border-r border-white/5 bg-white/[0.01] flex flex-col p-2 gap-2 shrink-0">
+                    <div className="text-[7px] font-bold text-white/20 uppercase tracking-widest mb-1 px-1">Library</div>
+                    {COMPONENTS.map((node) => (
+                      <div key={node.id} className="bg-white/[0.02] border border-white/5 rounded-lg p-2 flex flex-col gap-1.5 opacity-60 grayscale hover:opacity-100 hover:grayscale-0 transition-all cursor-default">
+                        <node.icon className={`w-3.5 h-3.5 ${node.color}`} />
+                        <span className="text-[7px] font-bold text-white/40 uppercase tracking-tight">{node.label}</span>
+                      </div>
+                    ))}
+                    <div className="mt-auto pt-2 border-t border-white/5">
+                       <div className="w-full h-4 rounded bg-white/5 border border-white/5 flex items-center justify-center">
+                          <Plus className="w-2.5 h-2.5 text-white/40" />
+                       </div>
+                    </div>
+                  </div>
 
-              <div className="flex-1 flex overflow-hidden">
-                {/* Sidebar Library */}
-                <div className="w-64 border-r border-white/5 bg-[#09090D] p-5 space-y-6 shrink-0">
-                   <div className="space-y-4">
-                      <p className="text-[10px] font-bold text-white/20 uppercase tracking-[0.2em]">Components</p>
-                      {COMPONENTS.map((c) => (
-                        <div key={c.id} className="p-3 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/5 cursor-pointer transition-all flex items-center gap-3 group">
-                           <div className={`p-2 rounded-lg ${c.bg}`}>
-                              <c.icon className={`w-3.5 h-3.5 ${c.color}`} />
-                           </div>
-                           <div className="flex-1">
-                              <p className="text-[11px] font-bold text-white tracking-tight">{c.label}</p>
-                              <p className="text-[9px] text-white/30 font-medium">{c.desc}</p>
-                           </div>
-                        </div>
-                      ))}
-                   </div>
-                   
-                   <div className="pt-6 space-y-4">
-                      <p className="text-[10px] font-bold text-white/20 uppercase tracking-[0.2em]">Execution Settings</p>
-                      <div className="p-3 space-y-3">
-                        <div className="h-1.5 w-full bg-white/5 rounded" />
-                        <div className="h-1.5 w-2/3 bg-white/5 rounded" />
-                        <div className="flex justify-between items-center pt-2">
-                           <div className="h-3 w-10 bg-accent-purple/20 rounded" />
-                           <div className="w-6 h-3 bg-white/5 rounded-full" />
+                  {/* Canvas Area */}
+                  <div className="flex-1 p-4 flex flex-col relative overflow-hidden bg-[url('/grid.svg')] bg-[size:16px_16px] bg-opacity-[0.02]">
+                    <div className="flex items-center justify-between mb-4 pb-2 border-b border-white/5 shrink-0">
+                      <div className="flex gap-4">
+                         <div className="w-16 h-2 bg-white/10 rounded-full" />
+                         <div className="w-12 h-2 bg-white/5 rounded-full" />
+                      </div>
+                      <div className="flex gap-2">
+                        <div className="w-10 h-4 rounded bg-white/5 border border-white/5" />
+                        <div className="w-12 h-4 rounded bg-accent-purple/20 border border-accent-purple/30 flex items-center justify-center">
+                           <span className="text-[6px] font-bold text-accent-purple uppercase tracking-widest">Live</span>
                         </div>
                       </div>
-                   </div>
-                </div>
-
-                {/* Main Workspace - Pipeline view */}
-                <div className="flex-1 bg-[#070709] p-10 overflow-y-auto scrollbar-none relative">
-                   {/* Centered Structured Pipeline */}
-                   <div className="max-w-md mx-auto space-y-6">
-                      <AnimatePresence>
-                        {pipelineNodes.map((node, i) => (
-                          <motion.div
-                            key={node.id}
-                            initial={{ opacity: 0, y: 30, scale: 0.95 }}
-                            animate={{ opacity: 1, y: 0, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.95 }}
-                            className="relative"
-                          >
-                            <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/10 backdrop-blur-xl flex items-center justify-between group">
-                              <div className="flex items-center gap-4">
-                                <div className={`p-3 rounded-xl ${node.bg} ring-1 ring-white/5`}>
-                                   <node.icon className={`w-5 h-5 ${node.color}`} />
-                                </div>
-                                <div>
-                                   <p className="text-[10px] font-bold text-white/20 uppercase tracking-widest mb-0.5">Step {i + 1}</p>
-                                   <p className="text-sm font-bold text-white tracking-tight italic uppercase">{node.label}</p>
-                                </div>
-                              </div>
-                              <div className="flex gap-1.5 grayscale opacity-20">
-                                 <Plus className="w-4 h-4 text-white" />
-                                 <Activity className="w-4 h-4 text-white" />
-                              </div>
-                            </div>
-
-                            {/* Aligned connector */}
-                            {i < sequence.length - 1 && (
-                              <div className="h-6 w-px bg-white/10 mx-auto" />
-                            )}
-                          </motion.div>
-                        ))}
-                      </AnimatePresence>
-                      
-                      {pipelineNodes.length === 0 && (
-                         <div className="h-64 flex flex-col items-center justify-center space-y-4 border-2 border-dashed border-white/5 rounded-3xl opacity-20">
-                            <Box className="w-10 h-10 text-white" />
-                            <p className="text-xs font-bold uppercase tracking-widest">Awaiting Simulation</p>
-                         </div>
-                      )}
-                   </div>
-
-                   {/* Fixed Canvas Hint */}
-                    <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-2 px-6 py-2 rounded-full bg-white/5 border border-white/5">
-                       <Layout className="w-3.5 h-3.5 text-white/20" />
-                       <span className="text-[10px] font-bold text-white/30 uppercase tracking-widest">Structured Pipeline Mode</span>
                     </div>
+                    
+                    {/* Visual Flow Nodes */}
+                    <div className="flex-1 relative flex items-center justify-center gap-4">
+                      {[
+                        { id: 'start', title: 'Start', icon: Zap, color: '#00D4FF' },
+                        { id: 'msg', title: 'Message', icon: MessageSquare, color: '#6C63FF' },
+                        { id: 'ai', title: 'AI Reasoning', icon: Bot, color: '#00D4FF' },
+                        { id: 'api', title: 'Sync API', icon: Globe, color: '#FF6B9D' }
+                      ].map((node, i, arr) => (
+                        <React.Fragment key={node.id}>
+                          <motion.div 
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 1 + i * 0.1 }}
+                            className="w-24 bg-white/[0.03] border border-white/10 rounded-xl p-3 flex flex-col gap-2 shadow-xl backdrop-blur-md relative z-10"
+                          >
+                             <div className="flex items-center justify-between">
+                                <node.icon className="w-4 h-4" style={{ color: node.color }} />
+                                <div className="w-1 h-1 rounded-full bg-white/20" />
+                             </div>
+                             <div className="text-[9px] font-bold text-white tracking-tight">{node.title}</div>
+                             <div className="h-0.5 w-full bg-white/5 rounded-full" />
+                          </motion.div>
+                          {i < arr.length - 1 && (
+                            <div className="w-4 h-px bg-white/10 relative">
+                               <motion.div 
+                                 animate={{ left: ['0%', '100%'], opacity: [0, 1, 0] }}
+                                 transition={{ duration: 2, repeat: Infinity, delay: i * 0.4 }}
+                                 className="absolute top-1/2 -translate-y-1/2 w-2 h-0.5 bg-white/40 shadow-[0_0_8px_white]"
+                               />
+                            </div>
+                          )}
+                        </React.Fragment>
+                      ))}
+                    </div>
+                    
+                    {/* Properties Panel (Partial) */}
+                    <div className="absolute right-0 top-0 bottom-0 w-24 border-l border-white/5 bg-white/[0.01] p-3 flex flex-col gap-3">
+                       <div className="h-1.5 w-12 bg-white/10 rounded-full" />
+                       <div className="space-y-2">
+                          {[1, 2, 3].map(j => (
+                            <div key={j} className="h-3 rounded bg-white/5 border border-white/5" />
+                          ))}
+                       </div>
+                    </div>
+                  </div>
                 </div>
               </div>
+              
+              {/* Laptop Screen Accent */}
+              <div className="absolute inset-0 bg-gradient-to-t from-accent-purple/5 via-transparent to-transparent pointer-events-none rounded-2xl" />
+              
+              {/* Floating Labels */}
+              <motion.div 
+                animate={{ y: [0, -8, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute -top-6 -right-6 p-3 glass-card border-white/10 shadow-xl rounded-xl"
+              >
+                <Layers className="w-4 h-4 text-accent-cyan" />
+              </motion.div>
             </div>
 
-            {/* Glowing Accent */}
-            <div className="absolute -top-10 -right-10 w-64 h-64 bg-accent-purple/20 rounded-full blur-[100px] -z-10" />
-          </div>
+            {/* Ambient Background Glow */}
+            <div className="absolute -inset-20 bg-accent-purple/10 blur-[100px] rounded-full -z-10" />
+          </Reveal>
         </div>
       </div>
     </section>
+
   );
 }
 

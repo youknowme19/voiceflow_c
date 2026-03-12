@@ -1,7 +1,7 @@
 "use client";
 
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useRef } from 'react';
+import { motion, useInView } from 'framer-motion';
 import { 
   BarChart3, 
   Activity, 
@@ -10,170 +10,161 @@ import {
   MousePointer2,
   Clock,
   ArrowUpRight,
-  Bot
+  Bot,
+  Zap,
+  ShieldCheck,
+  Globe,
+  Cpu
 } from 'lucide-react';
-
-const LOG_ENTRIES = [
-  { intent: 'Sales', count: 85, color: 'bg-accent-purple' },
-  { intent: 'Support', count: 62, color: 'bg-accent-cyan' },
-  { intent: 'General', count: 44, color: 'bg-accent-pink' },
-];
+import { Reveal } from '@/components/premium/PremiumUI';
 
 export default function AnalyticsPreview() {
+  const sectionRef = useRef(null);
+  const isInView = useInView(sectionRef, { amount: 0.2 });
+
   return (
-    <section className="py-40 relative bg-[#0A0A0F]">
-       <div className="container mx-auto px-6">
-          <div className="grid lg:grid-cols-2 gap-20 items-center">
-             <div className="space-y-12">
-                <div>
-                   <motion.div
-                     initial={{ opacity: 0, scale: 0.9 }}
-                     whileInView={{ opacity: 1, scale: 1 }}
-                     className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent-purple/10 border border-accent-purple/20 text-accent-purple text-[10px] font-bold uppercase tracking-widest px-4 mb-6"
-                   >
-                     Intelligence Dashboard
-                   </motion.div>
-                   <h2 className="text-4xl md:text-6xl font-display font-extrabold tracking-tight mb-8">
-                     Real-time <br />
-                     <span className="text-gradient">Intelligence.</span>
-                   </h2>
-                   <p className="text-white/40 text-xl font-light leading-relaxed max-w-lg">
-                     Track every conversation, monitor response times, and optimize your flows with our built-in analytics suite.
-                   </p>
-                </div>
+    <section ref={sectionRef} className="section-spacing relative bg-[#0B0B0F] overflow-hidden">
+      <div className="container mx-auto px-6">
+        <div className="grid lg:grid-cols-2 gap-20 items-center">
+          {/* Text Content (Left) - Rhythm B: Text Left / Visual Right */}
+          <div className="space-y-8 max-w-2xl">
+            <Reveal direction="right">
+              <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-accent-cyan/5 border border-accent-cyan/20 text-accent-cyan text-[11px] font-bold uppercase tracking-[0.2em] mb-6">
+                Intelligence
+              </div>
+              <h2 className="text-3xl md:text-[36px] font-display font-extrabold tracking-tight mb-8 leading-[1.1]">
+                Insights <br />
+                <span className="text-gradient">revealed.</span>
+              </h2>
+              <p className="text-base md:text-lg text-white/40 font-light leading-relaxed">
+                Measure what matters. Our deeply integrated analytics engine surfaces subtle patterns in agent behavior, allowing you to optimize performance with surgical precision.
+              </p>
+            </Reveal>
 
-                <div className="grid grid-cols-2 gap-8">
-                   {[
-                     { label: 'Avg Latency', val: '< 180ms', icon: Clock },
-                     { label: 'Success Rate', val: '99.9%', icon: Activity },
-                   ].map((stat, i) => (
-                     <motion.div 
-                       key={i}
-                       initial={{ opacity: 0, y: 20 }}
-                       whileInView={{ opacity: 1, y: 0 }}
-                       transition={{ delay: i * 0.1 }}
-                       className="p-6 rounded-2xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-colors group"
-                     >
-                       <div className="flex items-center gap-3 mb-4">
-                          <stat.icon className="w-4 h-4 text-white/20 group-hover:text-white transition-colors" />
-                          <p className="text-[10px] font-bold uppercase tracking-widest text-white/30">{stat.label}</p>
-                       </div>
-                       <p className="text-3xl font-display font-bold text-white mb-2">{stat.val}</p>
-                       <div className="flex items-center gap-1.5 text-emerald-500 font-bold text-[10px] uppercase tracking-widest">
-                          <TrendingUp className="w-3 h-3" />
-                          Optimal
-                       </div>
-                     </motion.div>
-                   ))}
-                </div>
-             </div>
-
-             <div className="relative">
-                {/* Dashboard Screenshot Simulation */}
-                <div className="bg-[#0B0B0F] border border-white/10 rounded-3xl overflow-hidden shadow-[0_40px_100px_rgba(0,0,0,0.8)] relative z-10 flex flex-col aspect-[4/3]">
-                   {/* Header */}
-                   <div className="h-14 border-b border-white/5 px-6 flex items-center justify-between shrink-0 bg-white/[0.02]">
-                      <div className="flex items-center gap-3">
-                         <TrendingUp className="w-4 h-4 text-accent-purple" />
-                         <span className="text-[10px] font-bold uppercase tracking-widest text-white/50">Analytics Overview</span>
-                      </div>
-                      <div className="h-7 px-3 rounded bg-accent-purple/10 border border-accent-purple/20 flex items-center gap-1.5">
-                         <span className="w-1 h-1 rounded-full bg-accent-purple animate-pulse" />
-                         <span className="text-[9px] font-bold text-accent-purple tracking-widest uppercase">Live Sync</span>
+            <div className="grid grid-cols-2 gap-6 pt-4">
+               {[
+                 { label: 'Avg Latency', value: '42ms', change: '-12%' },
+                 { label: 'Success Rate', value: '99.8%', change: '+0.2%' },
+                 { label: 'Token Cost', value: '$0.4/k', change: '-8%' },
+                 { label: 'Retention', value: '84%', change: '+5%' }
+               ].map((stat, i) => (
+                 <Reveal key={i} direction="up" delay={0.2 + i * 0.1}>
+                   <div className="p-6 rounded-2xl border border-white/5 bg-white/[0.02] backdrop-blur-2xl">
+                      <p className="text-[10px] font-bold text-white/20 uppercase tracking-[0.2em] mb-3">{stat.label}</p>
+                      <div className="flex items-baseline gap-2">
+                         <span className="text-2xl font-display font-bold text-white tracking-tight">{stat.value}</span>
+                         <span className={`text-[10px] font-bold ${stat.change.startsWith('+') ? 'text-emerald-500' : 'text-accent-cyan'}`}>{stat.change}</span>
                       </div>
                    </div>
-
-                   <div className="flex-1 p-8 grid grid-cols-2 gap-6 overflow-hidden">
-                      {/* Line Chart Area (Response Latency) */}
-                      <div className="col-span-2 bg-white/[0.02] border border-white/5 rounded-2xl p-6 flex flex-col justify-between group overflow-hidden">
-                         <div className="flex justify-between items-center mb-6">
-                            <h5 className="text-[10px] font-bold uppercase tracking-widest text-white/30">System Latency (ms)</h5>
-                            <span className="text-[10px] font-bold text-white/60">128ms Avg</span>
-                         </div>
-                         <div className="flex-1 flex items-end gap-2 h-24">
-                            {[40, 65, 30, 80, 50, 95, 45, 70, 55, 60, 40, 85].map((h, i) => (
-                              <motion.div
-                                key={i}
-                                initial={{ height: 0 }}
-                                whileInView={{ height: `${h}%` }}
-                                transition={{ duration: 1, delay: i * 0.05 + 0.5 }}
-                                className="flex-1 bg-gradient-to-t from-accent-purple to-accent-cyan opacity-40 rounded-t-sm group-hover:opacity-80 transition-opacity"
-                              />
-                            ))}
-                         </div>
-                      </div>
-
-                      {/* Bar Chart (Daily Requests) */}
-                      <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-6 flex flex-col justify-between overflow-hidden">
-                         <h5 className="text-[10px] font-bold uppercase tracking-widest text-white/30 mb-6">Throughput</h5>
-                         <div className="space-y-4">
-                            {[
-                               { d: 'Mon', p: 80, c: 'bg-accent-purple' },
-                               { d: 'Tue', p: 95, c: 'bg-accent-cyan' },
-                               { d: 'Wed', p: 70, c: 'bg-accent-purple' },
-                            ].map((day, i) => (
-                               <div key={i} className="space-y-1.5">
-                                 <div className="flex justify-between text-[9px] font-bold uppercase tracking-widest text-white/20">
-                                   <span>{day.d}</span>
-                                   <span>{day.p}k</span>
-                                 </div>
-                                 <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
-                                    <motion.div 
-                                      initial={{ width: 0 }}
-                                      whileInView={{ width: `${day.p}%` }}
-                                      transition={{ duration: 1, delay: i * 0.1 + 0.8 }}
-                                      className={`h-full ${day.c}`} 
-                                    />
-                                 </div>
-                               </div>
-                            ))}
-                         </div>
-                      </div>
-
-                      {/* Pie Chart Representation (Intent Distribution) */}
-                      <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-6 flex flex-col items-center justify-center relative group">
-                         <h5 className="absolute top-6 left-6 text-[10px] font-bold uppercase tracking-widest text-white/30">Intents</h5>
-                         <div className="w-24 h-24 rounded-full border-[10px] border-white/5 relative flex items-center justify-center">
-                            <motion.div
-                              initial={{ rotate: 180, opacity: 0 }}
-                              whileInView={{ rotate: 0, opacity: 1 }}
-                              transition={{ duration: 1, delay: 0.5 }}
-                              className="absolute inset-[-10px] rounded-full border-[10px] border-accent-purple border-l-transparent border-b-transparent"
-                            />
-                            <Bot className="w-5 h-5 text-white/20" />
-                         </div>
-                         <div className="mt-6 flex gap-3">
-                            <div className="flex items-center gap-1.5 grayscale opacity-30">
-                               <div className="w-1.5 h-1.5 rounded-full bg-accent-purple" />
-                               <span className="text-[8px] font-bold uppercase">Sales</span>
-                            </div>
-                            <div className="flex items-center gap-1.5 grayscale opacity-30">
-                               <div className="w-1.5 h-1.5 rounded-full bg-accent-cyan" />
-                               <span className="text-[8px] font-bold uppercase">Support</span>
-                            </div>
-                         </div>
-                      </div>
-                   </div>
-
-                   {/* Mock UI Labels */}
-                   <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none group-hover:scale-110 transition-transform duration-700">
-                      <div className="w-20 h-20 bg-accent-purple/10 rounded-full blur-[40px]" />
-                   </div>
-                </div>
-
-                {/* Accuracy Badge (Secondary) */}
-                <motion.div 
-                   initial={{ opacity: 0, x: 20 }}
-                   whileInView={{ opacity: 1, x: 0 }}
-                   transition={{ delay: 1 }}
-                   className="absolute -bottom-8 -left-8 p-6 bg-white rounded-2xl shadow-2xl z-20 max-w-[140px]"
-                >
-                   <p className="text-[9px] font-black uppercase text-black/30 tracking-widest mb-1 leading-none">Insight</p>
-                   <p className="text-sm font-bold text-black leading-tight">Conversation optimized.</p>
-                </motion.div>
-             </div>
+                 </Reveal>
+               ))}
+            </div>
           </div>
-       </div>
+
+          {/* Visual: Analytics Dashboard (Right) */}
+          <Reveal direction="left" className="relative lg:order-last">
+            <div className="bg-[#0B0B0F] rounded-3xl border border-white/10 shadow-2xl overflow-hidden min-h-[520px] flex flex-col relative z-20 group">
+              {/* Toolbar */}
+              <div className="h-14 border-b border-white/5 bg-white/[0.02] flex items-center justify-between px-6 shrink-0">
+                <div className="flex items-center gap-4">
+                   <div className="flex gap-2 opacity-30 grayscale">
+                      <div className="w-2.5 h-2.5 rounded-full bg-red-500" />
+                      <div className="w-2.5 h-2.5 rounded-full bg-amber-500" />
+                      <div className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+                   </div>
+                   <div className="h-2 w-24 bg-white/5 rounded-full" />
+                </div>
+                <div className="flex gap-2">
+                   <div className="px-3 py-1 rounded bg-white/5 text-[9px] font-bold text-white/40 uppercase tracking-widest border border-white/5">Live Monitoring</div>
+                </div>
+              </div>
+
+              {/* Dashboard Grid */}
+              <div className="flex-1 p-6 flex flex-col gap-6">
+                 {/* Precision Line Graph Simulation */}
+                 <div className="flex-1 bg-white/[0.01] border border-white/5 rounded-2xl p-6 flex flex-col relative overflow-hidden min-h-[240px]">
+                    <div className="flex justify-between items-center mb-6 relative z-10">
+                       <h4 className="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em]">Agent Performance</h4>
+                       <div className="flex gap-4">
+                        {[
+                          { label: 'Latency', color: '#00E5FF' },
+                          { label: 'Load', color: '#FF6B9D' },
+                          { label: 'Efficiency', color: '#6C63FF' }
+                        ].map(l => (
+                          <div key={l.label} className="flex items-center gap-2">
+                             <div className="w-1.5 h-1.5 rounded-full shadow-[0_0_8px_currentColor]" style={{ backgroundColor: l.color, color: l.color }} />
+                             <span className="text-[9px] text-white/30 font-bold uppercase">{l.label}</span>
+                          </div>
+                        ))}
+                       </div>
+                    </div>
+                    
+                    {/* SVG Line Graph */}
+                    <div className="flex-1 relative w-full h-full">
+                       <svg className="w-full h-full" viewBox="0 0 400 150" preserveAspectRatio="none">
+                          {/* Grid Lines */}
+                          {[0, 1, 2, 3].map((i) => (
+                            <line key={i} x1="0" y1={50 * i} x2="400" y2={50 * i} stroke="white" strokeOpacity="0.03" strokeWidth="1" />
+                          ))}
+                          
+                          {/* 3 Animated Lines - Draw once and stay */}
+                          {[
+                            { color: '#00E5FF', d: "M0,75 L40,85 L80,70 L120,95 L160,80 L200,90 L240,75 L280,85 L400,80" },
+                            { color: '#FF6B9D', d: "M0,100 L50,90 L100,110 L150,95 L200,105 L250,90 L300,110 L400,100" },
+                            { color: '#6C63FF', d: "M0,50 L60,40 L120,60 L180,45 L240,55 L300,40 L400,50" }
+                          ].map((line, i) => (
+                            <motion.path
+                              key={i}
+                              d={line.d}
+                              fill="none"
+                              stroke={line.color}
+                              strokeWidth={i === 0 ? "1.5" : "1"}
+                              strokeLinecap="round"
+                              initial={{ pathLength: 0, opacity: 0 }}
+                              animate={isInView ? { 
+                                pathLength: 1, 
+                                opacity: i === 0 ? 1 : 0.5
+                              } : {
+                                pathLength: 0,
+                                opacity: 0
+                              }}
+                              transition={{ 
+                                duration: 2.5, 
+                                ease: "easeOut",
+                                delay: i * 0.2
+                              }}
+                              filter={i === 0 ? "drop-shadow(0 0 4px currentColor)" : "none"}
+                              style={{ color: line.color }}
+                            />
+                          ))}
+                       </svg>
+                    </div>
+                 </div>
+
+                 {/* Metrics Row */}
+                 <div className="grid grid-cols-3 gap-6">
+                    {[
+                      { label: 'Efficiency', value: '99.9%' },
+                      { label: 'Throughput', value: '12.5k', unit: 'TPS' },
+                      { label: 'Uptime', value: '100.0%' }
+                    ].map((m, i) => (
+                      <div key={i} className="bg-white/[0.02] border border-white/5 rounded-xl p-5 flex flex-col justify-center gap-2 min-w-0">
+                         <p className="text-[10px] font-bold text-white/20 uppercase tracking-[0.2em] truncate">{m.label}</p>
+                         <p className="text-xl lg:text-2xl font-display font-bold text-white truncate">
+                           {m.value}
+                           {m.unit && <span className="text-[10px] opacity-30 ml-0.5">{m.unit}</span>}
+                         </p>
+                      </div>
+                    ))}
+                 </div>
+              </div>
+            </div>
+          </Reveal>
+        </div>
+      </div>
+      
+      {/* Visual Accents */}
+      <div className="absolute -bottom-20 -left-20 w-96 h-96 bg-accent-cyan/10 rounded-full blur-[150px] -z-10" />
     </section>
   );
 }
