@@ -62,7 +62,7 @@ const LiveWorkflowDemo = ({ showBackground = true }: { showBackground?: boolean 
   }, [isInView]);
 
   return (
-    <div ref={containerRef} className="relative w-full max-w-[540px] min-h-[750px] flex items-center justify-center pt-0">
+    <div ref={containerRef} className="relative w-full max-w-[540px] min-h-[750px] flex items-center justify-center pt-6">
       
       {/* Subtle Background Pipeline */}
       {showBackground && (
@@ -295,7 +295,7 @@ export default function LandingPage() {
         
         <div className="max-w-7xl mx-auto w-full grid lg:grid-cols-2 gap-12 items-center relative z-10">
           {/* Left: Content */}
-          <div className="text-left space-y-8 max-w-2xl">
+          <div className="text-left space-y-8 max-w-2xl relative -translate-y-6">
             <Reveal delay={0.1} direction="up" className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-white/[0.03] border border-white/10">
               <div className="w-2 h-2 rounded-full bg-accent-cyan shadow-[0_0_10px_rgba(0,212,255,0.5)] animate-pulse" />
               <span className="text-[11px] font-bold tracking-[0.2em] text-white/50 uppercase">The Future of AI Architecture</span>
@@ -329,7 +329,7 @@ export default function LandingPage() {
           </div>
 
           {/* Right: Interactive Phone Demo */}
-          <div className="hidden lg:flex justify-end items-center relative -translate-y-12">
+          <div className="hidden lg:flex justify-end items-center relative -translate-y-4">
             <LiveWorkflowDemo showBackground={false} />
           </div>
         </div>
