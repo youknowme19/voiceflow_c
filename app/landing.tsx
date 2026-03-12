@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import {
@@ -21,12 +21,11 @@ import {
   FadeInSection,
   ScaleReveal,
   FloatingOrb,
-  ParallaxSection,
 } from '@/components/premium/PremiumUI';
 
-import WorkflowPreview from '@/components/landing/WorkflowPreview';
-import DragBuilderPreview from '@/components/landing/DragBuilderPreview';
-import AutomationPreview from '@/components/landing/AutomationPreview';
+import SystemExecutionPreview from '@/components/landing/SystemExecutionPreview';
+import BuilderUIPreview from '@/components/landing/BuilderUIPreview';
+import ScenarioSimulation from '@/components/landing/ScenarioSimulation';
 
 export default function LandingPage() {
   return (
@@ -154,16 +153,16 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Workflow Preview */}
-      <WorkflowPreview />
+      {/* Scenario Simulation (Replaces "Build workflows that actually work") */}
+      <ScenarioSimulation />
 
-      {/* Drag Builder Preview */}
-      <DragBuilderPreview />
+      {/* Builder UI Preview (Replaces "Design like a pro, no code required") */}
+      <BuilderUIPreview />
 
-      {/* Automation Preview */}
-      <AutomationPreview />
+      {/* System Execution Preview (Replaces "See the magic in action") */}
+      <SystemExecutionPreview />
 
-      {/* Analytics Preview (Mockup for now) */}
+      {/* Analytics Preview */}
       <section className="py-40 relative overflow-hidden bg-[#0A0A0F]">
         <div className="container mx-auto px-6">
           <div className="grid lg:grid-cols-2 gap-20 items-center">
