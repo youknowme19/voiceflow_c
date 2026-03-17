@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { NextResponse } from "next/server";
 import { embedAndStoreDocument } from "@/lib/rag_engine";
 import { getAdminClient, getRouteClient } from "@/lib/supabaseServer";

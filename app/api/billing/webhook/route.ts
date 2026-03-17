@@ -1,6 +1,7 @@
+export const dynamic = 'force-dynamic';
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
-import { supabase } from "@/lib/supabaseClient";
+import { getAdminClient } from "@/lib/supabaseServer";
 
 const stripeKey = process.env.STRIPE_SECRET_KEY;
 const stripe = stripeKey
@@ -41,9 +42,9 @@ export async function POST(request: Request) {
         const subscription = event.data.object as Stripe.Subscription;
 
         // Get user by email
-        const { data: user } = await supabase.auth.admin.listUsers();
+        const { data: user } = await getAdminClient().auth.admin.listUsers();
         const matchedUser = user?.users.find(
-          (u) => u.email === (subscription.metadata?.userId as string)
+          (u: any) => u.email === (subscription.metadata?.userId as string)
         );
 
         if (matchedUser) {
@@ -61,7 +62,7 @@ export async function POST(request: Request) {
           }
 
           // Update subscription
-          await supabase.from("subscriptions").upsert(
+          await getAdminClient().from("subscriptions").upsert(
             {
               user_id: matchedUser.id,
               stripe_subscription_id: subscription.id,
@@ -83,7 +84,7 @@ export async function POST(request: Request) {
           );
 
           // Add/update credits
-          await supabase.from("usage_credits").upsert(
+          await getAdminClient().from("usage_credits").upsert(
             {
               user_id: matchedUser.id,
               credits,
@@ -98,19 +99,19 @@ export async function POST(request: Request) {
         const subscription = event.data.object as Stripe.Subscription;
 
         // Get user and update status
-        const { data: user } = await supabase.auth.admin.listUsers();
+        const { data: user } = await getAdminClient().auth.admin.listUsers();
         const matchedUser = user?.users.find(
-          (u) => u.email === (subscription.metadata?.userId as string)
+          (u: any) => u.email === (subscription.metadata?.userId as string)
         );
 
         if (matchedUser) {
-          await supabase
+          await getAdminClient()
             .from("subscriptions")
             .update({ status: "canceled" })
             .eq("user_id", matchedUser.id);
 
           // Reset credits to starter tier
-          await supabase
+          await getAdminClient()
             .from("usage_credits")
             .update({ credits: 1000 })
             .eq("user_id", matchedUser.id);

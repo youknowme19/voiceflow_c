@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { NextResponse } from "next/server";
 import { getRouteClient, getAdminClient } from "@/lib/supabaseServer";
 import { sendTeamInvitation } from "@/lib/email";
@@ -14,7 +15,7 @@ export async function POST(request: Request) {
     const { data: { users }, error: searchError } = await adminClient.auth.admin.listUsers();
     
     // Fallback: check if we can add to team_members directly if user exists
-    let existingUser = users?.find(u => u.email === email);
+    let existingUser = users?.find((u: any) => u.email === email);
     
     if (existingUser) {
       const { error: memberError } = await adminClient
