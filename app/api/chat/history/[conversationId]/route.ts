@@ -11,8 +11,9 @@ function makeClient(authHeader: string | null) {
 
 export async function GET(
   request: Request,
-  { params }: { params: { conversationId: string } }
+  { params }: { params: Promise<{ conversationId: string }> }
 ) {
+  const { conversationId } = await params;
   try {
     const supabase = makeClient(request.headers.get("Authorization"));
     const { data: { user } } = await supabase.auth.getUser();
@@ -21,7 +22,7 @@ export async function GET(
     const { data: messages, error } = await supabase
       .from("messages")
       .select("id, sender, content, created_at, metadata")
-      .eq("conversation_id", params.conversationId)
+      .eq("conversation_id", conversationId)
       .order("created_at", { ascending: true });
 
     if (error) throw error;

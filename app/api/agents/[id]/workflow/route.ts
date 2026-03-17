@@ -12,16 +12,17 @@ function makeClient(authHeader: string | null) {
 // GET /api/agents/[id]/workflow — load current nodes + edges
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     const supabase = makeClient(request.headers.get("Authorization"));
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const [{ data: nodes, error: nodesErr }, { data: edges, error: edgesErr }] = await Promise.all([
-      supabase.from("nodes").select("*").eq("agent_id", params.id).order("created_at"),
-      supabase.from("edges").select("*").eq("agent_id", params.id).order("created_at"),
+      supabase.from("nodes").select("*").eq("agent_id", id).order("created_at"),
+      supabase.from("edges").select("*").eq("agent_id", id).order("created_at"),
     ]);
 
     if (nodesErr) throw nodesErr;
@@ -31,7 +32,7 @@ export async function GET(
     const { data: latestVer } = await supabase
       .from("agent_versions")
       .select("version")
-      .eq("agent_id", params.id)
+      .eq("agent_id", id)
       .order("version", { ascending: false })
       .limit(1)
       .single();
@@ -49,8 +50,9 @@ export async function GET(
 // POST /api/agents/[id]/workflow — save workflow + create version snapshot
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id: agentId } = await params;
   try {
     const supabase = makeClient(request.headers.get("Authorization"));
     const { data: { user } } = await supabase.auth.getUser();
@@ -62,8 +64,6 @@ export async function POST(
     if (!Array.isArray(nodes) || !Array.isArray(edges)) {
       return NextResponse.json({ error: "nodes and edges arrays are required" }, { status: 400 });
     }
-
-    const agentId = params.id;
 
     // Determine next version number
     const { data: lastVer } = await supabase

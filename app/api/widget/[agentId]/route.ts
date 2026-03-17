@@ -17,14 +17,15 @@ export async function OPTIONS() {
 // GET /api/widget/[agentId] — return agent info for widget initialization
 export async function GET(
   _request: Request,
-  { params }: { params: { agentId: string } }
+  { params }: { params: Promise<{ agentId: string }> }
 ) {
+  const { agentId } = await params;
   try {
     const adminClient = getAdminClient();
     const { data: agent, error } = await adminClient
       .from("agents")
       .select("id, name, description, settings")
-      .eq("id", params.agentId)
+      .eq("id", agentId)
       .single();
 
     if (error || !agent) {
@@ -52,8 +53,9 @@ export async function GET(
 // POST /api/widget/[agentId] — public chat (no auth, uses service role)
 export async function POST(
   request: Request,
-  { params }: { params: { agentId: string } }
+  { params }: { params: Promise<{ agentId: string }> }
 ) {
+  const { agentId } = await params;
   try {
     const body = await request.json();
     const { message, conversationId: existingConversationId, sessionId } = body;
@@ -61,8 +63,6 @@ export async function POST(
     if (!message?.trim()) {
       return NextResponse.json({ error: "message is required" }, { status: 400, headers: corsHeaders });
     }
-
-    const agentId = params.agentId;
     const adminClient = getAdminClient();
 
     // Verify agent exists
