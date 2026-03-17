@@ -98,6 +98,7 @@ export async function embedAndStoreDocument(
   documentId: string,
   text: string,
   supabaseClient?: any
+): Promise<{ chunksStored: number }> {
   const url = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
 
@@ -131,6 +132,7 @@ export async function retrieveContext(
   agentId: string,
   limit = 3,
   supabaseClient?: any
+): Promise<string> {
   const url = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
