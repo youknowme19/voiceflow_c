@@ -64,7 +64,7 @@ export default function AgentSettingsPage() {
           }}
           className="w-full p-2 border rounded bg-transparent"
         >
-          {Object.keys(providerModelOptions).map(p => (
+          {Object.keys(providerModelOptions).map((p: any) => (
             <option key={p} value={p}>{p.toUpperCase()}</option>
           ))}
         </select>

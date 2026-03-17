@@ -187,7 +187,7 @@ export default function KnowledgePage() {
                   className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-accent-purple transition-colors appearance-none"
                 >
                   <option value="">Specific Agent (Optional)</option>
-                  {agents.map(a => (
+                  {agents.map((a: any) => (
                     <option key={a.id} value={a.id}>{a.name}</option>
                   ))}
                 </select>

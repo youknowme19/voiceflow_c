@@ -93,7 +93,7 @@ export default function AnalyticsPage() {
               onChange={(e) => setSelectedAgent(e.target.value)}
             >
               {agents.length === 0 && <option value="">No Agents Found</option>}
-              {agents.map(a => (
+              {agents.map((a: any) => (
                 <option key={a.id} value={a.id} className="bg-gray-900">{a.name}</option>
               ))}
             </select>

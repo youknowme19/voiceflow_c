@@ -26,7 +26,7 @@ export default function ConversationsPage() {
           .select('id')
           .eq('team_id', teamData.team_id);
 
-        const agentIds = agents?.map(a => a.id) || [];
+        const agentIds = agents?.map((a: any) => a.id) || [];
 
         if (agentIds.length > 0) {
           const { data, error } = await supabase
