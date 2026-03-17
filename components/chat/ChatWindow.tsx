@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import MessageBubble from "./MessageBubble";
 import InputBox from "./InputBox";
+import { supabase } from "@/lib/supabaseClient";
 
 interface ChatMessage {
   sender: string;
@@ -20,19 +21,36 @@ export default function ChatWindow({ agentId }: ChatWindowProps) {
   const [loading, setLoading] = useState(false);
 
   const send = async (text: string) => {
+    if (!text.trim()) return;
     setMessages((m) => [...m, { sender: "user", text }]);
     setLoading(true);
-    const res = await fetch(`/api/agents/${agentId}/test`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text, agentId, conversationId }),
-    });
-    const data = await res.json();
-    if (data.reply) {
-      setMessages((m) => [...m, { sender: "agent", text: data.reply, metadata: data.metadata }]);
+
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const res = await fetch(`/api/agents/${agentId}/test`, {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${session?.access_token}`
+        },
+        body: JSON.stringify({ text, agentId, conversationId }),
+      });
+      
+      if (!res.ok) {
+        throw new Error(`Failed to send message: ${res.statusText}`);
+      }
+
+      const data = await res.json();
+      if (data.reply) {
+        setMessages((m) => [...m, { sender: "agent", text: data.reply, metadata: data.metadata }]);
+      }
+      if (data.conversationId) setConversationId(data.conversationId);
+    } catch (err: any) {
+      console.error("Chat error:", err);
+      setMessages((m) => [...m, { sender: "agent", text: "Error: Could not reach the agent. Please try again." }]);
+    } finally {
+      setLoading(false);
     }
-    if (data.conversationId) setConversationId(data.conversationId);
-    setLoading(false);
   };
 
   return (

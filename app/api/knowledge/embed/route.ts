@@ -1,19 +1,19 @@
 import { NextResponse } from "next/server";
-import { supabase } from "../../../../lib/supabaseClient";
-import { generateEmbedding } from "../../../../lib/openrouter";
+import { embedAndStoreDocument } from "@/lib/rag_engine";
+import { getAdminClient, getRouteClient } from "@/lib/supabaseServer";
 
+// POST /api/knowledge/embed
 export async function POST(request: Request) {
-  const { documentId, text } = await request.json();
-  if (!documentId || !text) {
-    return NextResponse.json({ error: "documentId and text required" }, { status: 400 });
-  }
-
-  // generate embedding via openrouter
   try {
-    const embedRes = await generateEmbedding([text]);
-    const vector = embedRes.data[0].embedding;
-    await supabase.from("embeddings").insert({ document_id: documentId, vector, text });
-    return NextResponse.json({ success: true });
+    const supabase = getRouteClient(request);
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    const { documentId, text } = await request.json();
+
+    const adminClient = getAdminClient();
+    const { chunksStored } = await embedAndStoreDocument(documentId, text, adminClient);
+    return NextResponse.json({ success: true, chunksStored });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }

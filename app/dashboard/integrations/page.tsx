@@ -1,7 +1,9 @@
-'use client';
+"use client";
 
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabaseClient';
+import { FadeInSection, GlassCard, GradientText } from "@/components/premium/PremiumUI";
+import { Trash2, Plus, Globe, Link as LinkIcon, Database, ExternalLink, Search } from 'lucide-react';
 
 interface Integration {
   id: string;
@@ -33,14 +35,13 @@ export default function IntegrationsPage() {
 
   const loadIntegrations = async () => {
     setLoading(true);
-    const { data: user } = await supabase.auth.getUser();
-    if (!user.user) return;
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return;
 
-    // Get user's team
     const { data: teamData } = await supabase
       .from('team_members')
       .select('team_id')
-      .eq('user_id', user.user.id)
+      .eq('user_id', session.user.id)
       .single();
 
     if (teamData) {
@@ -57,17 +58,13 @@ export default function IntegrationsPage() {
     e.preventDefault();
     setLoading(true);
 
-    const { data: user } = await supabase.auth.getUser();
-    if (!user.user) {
-      setLoading(false);
-      return;
-    }
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return;
 
-    // Get user's team
     const { data: teamData } = await supabase
       .from('team_members')
       .select('team_id')
-      .eq('user_id', user.user.id)
+      .eq('user_id', session.user.id)
       .single();
 
     if (!teamData) {
@@ -88,7 +85,6 @@ export default function IntegrationsPage() {
 
       if (error) throw error;
 
-      alert('Integration added successfully');
       setFormData({
         name: '',
         endpoint: '',
@@ -100,148 +96,154 @@ export default function IntegrationsPage() {
       setShowForm(false);
       loadIntegrations();
     } catch (error: any) {
-      alert('Error adding integration: ' + error.message);
+      alert('Error: ' + error.message);
     }
     setLoading(false);
   };
 
   const handleDeleteIntegration = async (id: string) => {
     if (!confirm('Are you sure?')) return;
-
-    const { error } = await supabase.from('integrations').delete().eq('id', id);
-    if (error) {
-      alert('Error: ' + error.message);
-    } else {
-      loadIntegrations();
-    }
+    await supabase.from('integrations').delete().eq('id', id);
+    loadIntegrations();
   };
 
   return (
-    <div className="space-y-8">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">API Integrations</h1>
-        <button
-          onClick={() => setShowForm(!showForm)}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
-        >
-          {showForm ? 'Cancel' : 'Add Integration'}
-        </button>
-      </div>
+    <div className="space-y-12 p-6 pb-20">
+      <FadeInSection>
+        <div className="flex justify-between items-end">
+          <div>
+            <h1 className="text-4xl font-extrabold tracking-tight mb-2">
+              API <GradientText className="text-gradient">Integrations</GradientText>
+            </h1>
+            <p className="text-white/40 text-lg">Connect external systems to your AI agent workflows.</p>
+          </div>
+          <button
+            onClick={() => setShowForm(!showForm)}
+            className="flex items-center gap-2 px-6 py-3 rounded-xl bg-accent-purple text-white font-bold text-sm hover:shadow-glow-purple shadow-lg transition-all active:scale-95"
+          >
+            {showForm ? 'Cancel' : (
+              <>
+                <Plus size={18} />
+                New Integration
+              </>
+            )}
+          </button>
+        </div>
+      </FadeInSection>
 
       {showForm && (
-        <form onSubmit={handleAddIntegration} className="bg-gray-800 rounded-lg p-6 space-y-4">
-          <div>
-            <label className="block text-sm font-medium mb-2">Name</label>
-            <input
-              type="text"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              required
-              className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white"
-              placeholder="e.g., Slack API"
-            />
-          </div>
+        <FadeInSection>
+          <GlassCard variant="medium" className="p-8 border-accent-purple/20">
+            <h3 className="text-xl font-bold mb-8 flex items-center gap-2">
+               <Globe size={20} className="text-accent-purple" />
+               Register API Endpoint
+            </h3>
+            <form onSubmit={handleAddIntegration} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="md:col-span-2">
+                <label className="block text-xs font-bold uppercase tracking-widest text-white/40 mb-2">System Name</label>
+                <input
+                  type="text"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-accent-purple transition-all"
+                  placeholder="e.g. Slack Webhook"
+                  required
+                />
+              </div>
 
-          <div>
-            <label className="block text-sm font-medium mb-2">Endpoint URL</label>
-            <input
-              type="url"
-              value={formData.endpoint}
-              onChange={(e) => setFormData({ ...formData, endpoint: e.target.value })}
-              required
-              className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white"
-              placeholder="https://api.example.com/webhook"
-            />
-          </div>
+              <div className="md:col-span-2">
+                <label className="block text-xs font-bold uppercase tracking-widest text-white/40 mb-2">Endpoint URL</label>
+                <input
+                  type="url"
+                  value={formData.endpoint}
+                  onChange={(e) => setFormData({ ...formData, endpoint: e.target.value })}
+                  className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-accent-purple transition-all"
+                  placeholder="https://api.yourdomain.com/v1"
+                  required
+                />
+              </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium mb-2">Method</label>
-              <select
-                value={formData.method}
-                onChange={(e) => setFormData({ ...formData, method: e.target.value as any })}
-                className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white"
-              >
-                <option>GET</option>
-                <option>POST</option>
-                <option>PUT</option>
-                <option>DELETE</option>
-              </select>
-            </div>
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-widest text-white/40 mb-2">Method</label>
+                <select
+                  value={formData.method}
+                  onChange={(e) => setFormData({ ...formData, method: e.target.value as any })}
+                  className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-accent-purple transition-all"
+                >
+                  <option className="bg-gray-900 text-white">GET</option>
+                  <option className="bg-gray-900 text-white">POST</option>
+                  <option className="bg-gray-900 text-white">PUT</option>
+                  <option className="bg-gray-900 text-white">DELETE</option>
+                </select>
+              </div>
 
-            <div>
-              <label className="block text-sm font-medium mb-2">Auth Token (Optional)</label>
-              <input
-                type="password"
-                value={formData.auth_token}
-                onChange={(e) => setFormData({ ...formData, auth_token: e.target.value })}
-                className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white"
-                placeholder="Bearer token"
-              />
-            </div>
-          </div>
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-widest text-white/40 mb-2">Auth Header (Optional)</label>
+                <input
+                  type="password"
+                  value={formData.auth_token}
+                  onChange={(e) => setFormData({ ...formData, auth_token: e.target.value })}
+                  className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-accent-purple transition-all"
+                  placeholder="Bearer token..."
+                />
+              </div>
 
-          <div>
-            <label className="block text-sm font-medium mb-2">Headers (JSON)</label>
-            <textarea
-              value={formData.headers}
-              onChange={(e) => setFormData({ ...formData, headers: e.target.value })}
-              className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white h-20 font-mono text-sm"
-              placeholder='{}'
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium mb-2">Body Template (JSON)</label>
-            <textarea
-              value={formData.body_template}
-              onChange={(e) => setFormData({ ...formData, body_template: e.target.value })}
-              className="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white h-20 font-mono text-sm"
-              placeholder='{"message": "{userMessage}"}'
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
-          >
-            {loading ? 'Creating...' : 'Create Integration'}
-          </button>
-        </form>
+              <div className="md:col-span-2">
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full py-4 mt-2 rounded-xl bg-accent-purple text-white font-bold text-sm shadow-glow-purple disabled:opacity-50 transition-all font-sans"
+                >
+                  {loading ? 'Registering...' : 'Create Integration'}
+                </button>
+              </div>
+            </form>
+          </GlassCard>
+        </FadeInSection>
       )}
 
-      {loading && <p>Loading...</p>}
-
-      <div className="grid gap-4">
-        {integrations.map((integration) => (
-          <div
-            key={integration.id}
-            className="bg-gray-800 rounded-lg p-6 flex justify-between items-start"
-          >
-            <div>
-              <h3 className="text-lg font-semibold">{integration.name}</h3>
-              <p className="text-gray-400 text-sm mt-1">{integration.endpoint}</p>
-              <p className="text-gray-400 text-sm">
-                Method: <span className="font-mono">{integration.method}</span>
-              </p>
-              <p className="text-gray-400 text-sm">
-                Created: {new Date(integration.created_at).toLocaleDateString()}
-              </p>
-            </div>
-            <button
-              onClick={() => handleDeleteIntegration(integration.id)}
-              className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
-            >
-              Delete
-            </button>
+      <div className="grid gap-6">
+        {loading && integrations.length === 0 ? (
+          <div className="text-white/20 py-20 text-center animate-pulse flex flex-col items-center gap-4">
+             <Database size={40} className="text-white/10" />
+             <span className="text-xs uppercase tracking-[0.2em] font-bold">Syncing connections...</span>
           </div>
-        ))}
+        ) : integrations.length === 0 ? (
+          <div className="p-32 border-2 border-dashed border-white/5 rounded-[2.5rem] text-center bg-white/[0.01]">
+            <div className="w-16 h-16 rounded-full bg-white/5 mx-auto flex items-center justify-center mb-6">
+               <LinkIcon size={24} className="text-white/10" />
+            </div>
+            <p className="text-white/30 font-medium font-sans">No external APIs registered yet.</p>
+          </div>
+        ) : (
+          integrations.map((int, i) => (
+            <FadeInSection key={int.id} delay={i * 0.05}>
+              <GlassCard variant="medium" className="p-6 flex items-center justify-between group hover:border-white/10 transition-all">
+                <div className="flex items-center gap-6">
+                  <div className="w-14 h-14 rounded-2xl bg-white/5 flex flex-col items-center justify-center border border-white/10 group-hover:border-accent-cyan transition-colors">
+                    <span className="text-[10px] font-bold text-accent-cyan uppercase tracking-tighter">{int.method}</span>
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-lg group-hover:text-white transition-colors">{int.name}</h3>
+                    <p className="text-[10px] text-white/40 font-mono mt-1 break-all flex items-center gap-2">
+                       <ExternalLink size={10} />
+                       {int.endpoint}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4">
+                  <button 
+                    onClick={() => handleDeleteIntegration(int.id)}
+                    className="p-3 rounded-xl hover:bg-red-500/10 text-white/20 hover:text-red-500 transition-all active:scale-95"
+                  >
+                    <Trash2 size={18} />
+                  </button>
+                </div>
+              </GlassCard>
+            </FadeInSection>
+          ))
+        )}
       </div>
-
-      {!loading && integrations.length === 0 && (
-        <p className="text-gray-400">No integrations yet. Create one to get started.</p>
-      )}
     </div>
   );
 }

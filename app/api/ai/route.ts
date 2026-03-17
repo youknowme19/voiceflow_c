@@ -1,12 +1,15 @@
 import { NextResponse } from "next/server";
-import { generateAIResponse } from "../../../lib/openrouter";
+import { routeAIRequest } from "../../../lib/ai_router";
 
 export async function POST(request: Request) {
   const body = await request.json();
-  const { messages, model } = body;
+  const { messages, model, provider = "openrouter" } = body;
   try {
-    const result = await generateAIResponse(messages, model);
-    return NextResponse.json(result);
+    const { aiResponse } = await routeAIRequest(messages, {
+      provider,
+      model
+    });
+    return NextResponse.json({ choices: [{ message: { content: aiResponse } }] });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }

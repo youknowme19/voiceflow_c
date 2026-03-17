@@ -1,79 +1,129 @@
 import { NextResponse } from "next/server";
-import { supabase } from "../../../../../lib/supabaseClient";
+import { getRouteClient } from "../../../../../lib/supabaseServer";
 import { runAgent } from "../../../../../lib/runtime/agentRunner";
 
-export async function POST(request: Request) {
-  const { text, agentId, conversationId } = await request.json();
-  if (!agentId || !text) {
-    return NextResponse.json({ error: "agentId and text required" }, { status: 400 });
-  }
+function makeClient(request: Request) {
+  return getRouteClient(request);
+}
 
-  // Check credits
-  const { data: user } = await supabase.auth.getUser();
-  if (!user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  const { data: credits } = await supabase
-    .from("usage_credits")
-    .select("credits")
-    .eq("user_id", user.user?.id)
-    .single();
-
-  if (!credits || credits.credits <= 0) {
-    return NextResponse.json({ error: "Insufficient credits" }, { status: 402 });
-  }
-
-  // create or use conversation
-  let convId = conversationId;
-  if (!convId) {
-    const { data: convData, error: convErr } = await supabase
-      .from("conversations")
-      .insert({ agent_id: agentId, status: "active" })
-      .select("id")
-      .single();
-    if (convErr) return NextResponse.json({ error: convErr.message }, { status: 500 });
-    convId = convData.id;
-  }
-
-  // log user message
-  await supabase.from("messages").insert({
-    conversation_id: convId,
-    sender: "user",
-    content: text,
-  });
-
+// GET /api/agents/[id]/test — fetch conversation test sessions for an agent
+export async function GET(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
-    // Run agent workflow engine
-    const { output, logs } = await runAgent(agentId, text, convId, supabase);
+    const { id: agentId } = await params;
+    const supabase = makeClient(request);
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    // log ai message
-    await supabase.from("messages").insert({
-      conversation_id: convId,
-      sender: "agent",
-      content: output,
-      metadata: { logs },
-    });
+    const { data: conversations, error } = await supabase
+      .from("conversations")
+      .select(`
+        id,
+        status,
+        started_at,
+        ended_at,
+        latency_ms,
+        tokens_used,
+        workflow_version
+      `)
+      .eq("agent_id", agentId)
+      .order("started_at", { ascending: false })
+      .limit(50);
 
-    // Log execution in agent_logs
-    await supabase.from("agent_logs").insert({
-      agent_id: agentId,
-      conversation_id: convId,
-      event_type: "workflow_execution",
-      details: logs,
-    });
-
-    // Deduct credits (1 credit per AI call)
-    await supabase
-      .from("usage_credits")
-      .update({ credits: credits.credits - 1 })
-      .eq("user_id", user.user?.id);
-
-    return NextResponse.json({ reply: output, conversationId: convId, logs });
+    if (error) throw error;
+    return NextResponse.json({ conversations: conversations || [] });
   } catch (error: any) {
-    return NextResponse.json(
-      { error: "Workflow execution failed: " + error.message },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
+// POST /api/agents/[id]/test — run a test message through the agent workflow
+export async function POST(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id: agentId } = await params;
+    const { text, conversationId: existingConversationId } = await request.json();
+
+    if (!text) {
+      return NextResponse.json({ error: "Text is required" }, { status: 400 });
+    }
+
+    const authHeader = request.headers.get('Authorization') || request.headers.get('authorization');
+    const token = authHeader?.startsWith('Bearer ') ? authHeader.substring(7) : authHeader;
+
+    const supabase = getRouteClient(request);
+    
+    // Explicitly pass token to getUser
+    const { data: { user }, error: authError } = token 
+      ? await supabase.auth.getUser(token)
+      : await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // 1. Get or create conversation (test mode)
+    let conversationId = existingConversationId;
+    if (!conversationId) {
+      const { data: newConv, error: convError } = await supabase
+        .from('conversations')
+        .insert({
+          agent_id: agentId,
+          user_id: user.id,
+          status: 'active'
+        })
+        .select('id')
+        .single();
+      
+      if (convError) throw convError;
+      conversationId = newConv.id;
+    }
+
+    // 2. Save user message
+    await supabase.from('messages').insert({
+      conversation_id: conversationId,
+      sender: 'user',
+      content: text
+    });
+
+    // 3. Run the agent workflow
+    console.log("[Agent Test] Running workflow for agent:", agentId, "conv:", conversationId);
+    let result;
+    try {
+      result = await runAgent(agentId, text, conversationId, supabase);
+      console.log("[Agent Test] Workflow result:", !!result);
+    } catch (runErr: any) {
+      console.error("[Agent Test] runAgent failed:", runErr);
+      throw new Error(`Workflow execution failed: ${runErr.message}`);
+    }
+
+    const { output, logs } = result;
+
+    // 4. Save agent message
+    console.log("[Agent Test] Saving assistant message...");
+    const { error: msgErr } = await supabase.from('messages').insert({
+      conversation_id: conversationId,
+      sender: 'assistant',
+      content: output || "No response generated.",
+      metadata: { logs }
+    });
+    
+    if (msgErr) {
+      console.error("[Agent Test] Failed to save message:", msgErr);
+      // Don't throw here, just log it as it's not fatal for the response
+    }
+
+    return NextResponse.json({
+      reply: output,
+      conversationId,
+      metadata: { logs }
+    });
+  } catch (error: any) {
+    console.error("[Agent Test API Error]:", error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

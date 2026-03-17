@@ -11,6 +11,7 @@ const nodeTypes = [
   { type: "condition", icon: "💎", color: "from-yellow-500/20 to-orange-500/20" },
   { type: "api", icon: "🔗", color: "from-cyan-500/20 to-blue-500/20" },
   { type: "knowledge", icon: "📚", color: "from-indigo-500/20 to-purple-500/20" },
+  { type: "input", icon: "⌨️", color: "from-pink-500/20 to-rose-500/20" },
   { type: "end", icon: "🏁", color: "from-red-500/20 to-orange-500/20" },
 ];
 

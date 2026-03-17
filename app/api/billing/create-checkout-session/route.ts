@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
-import { supabase } from "@/lib/supabaseClient";
+import { getRouteClient } from "@/lib/supabaseServer";
 
 const stripeKey = process.env.STRIPE_SECRET_KEY;
 const stripe = stripeKey
@@ -11,6 +11,10 @@ const stripe = stripeKey
 
 export async function POST(request: Request) {
   try {
+    const supabase = getRouteClient(request);
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
     if (!stripe) {
       return NextResponse.json(
         { error: "Stripe not configured" },

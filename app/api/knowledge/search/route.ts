@@ -1,0 +1,54 @@
+import { NextResponse } from "next/server";
+import { createClient } from "@supabase/supabase-js";
+import { retrieveContext } from "@/lib/rag_engine";
+
+function makeClient(authHeader: string | null) {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    authHeader ? { global: { headers: { Authorization: authHeader } } } : {}
+  );
+}
+
+// GET /api/knowledge/search?agentId=...&query=...
+export async function GET(request: Request) {
+  try {
+    const url = new URL(request.url);
+    const agentId = url.searchParams.get("agentId");
+    const query = url.searchParams.get("query");
+
+    if (!agentId || !query) {
+      return NextResponse.json({ error: "agentId and query are required" }, { status: 400 });
+    }
+
+    const supabase = makeClient(request.headers.get("Authorization"));
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    const context = await retrieveContext(query, agentId, 5, supabase);
+    return NextResponse.json({ results: context, query });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
+// Also support the embed endpoint used by knowledge page
+export async function POST(request: Request) {
+  try {
+    const supabase = makeClient(request.headers.get("Authorization"));
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    const body = await request.json();
+    const { agentId, query, limit = 5 } = body;
+
+    if (!agentId || !query) {
+      return NextResponse.json({ error: "agentId and query are required" }, { status: 400 });
+    }
+
+    const context = await retrieveContext(query, agentId, limit, supabase);
+    return NextResponse.json({ results: context, query });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}

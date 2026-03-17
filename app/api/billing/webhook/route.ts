@@ -53,9 +53,11 @@ export async function POST(request: Request) {
           const priceId = lineItem?.price.id;
 
           if (priceId === process.env.STRIPE_PRICE_PRO) {
-            credits = 10000;
+            credits = 50000;
           } else if (priceId === process.env.STRIPE_PRICE_BUSINESS) {
-            credits = 30000;
+            credits = 250000;
+          } else if (priceId === process.env.STRIPE_PRICE_ENTERPRISE) {
+            credits = 1000000;
           }
 
           // Update subscription
@@ -69,7 +71,9 @@ export async function POST(request: Request) {
                   ? "pro"
                   : priceId === process.env.STRIPE_PRICE_BUSINESS
                     ? "business"
-                    : "starter",
+                    : priceId === process.env.STRIPE_PRICE_ENTERPRISE
+                      ? "enterprise"
+                      : "starter",
               status: subscription.status,
               current_period_end: new Date(
                 (subscription as any).current_period_end * 1000
