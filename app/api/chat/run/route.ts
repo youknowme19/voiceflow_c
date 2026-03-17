@@ -4,9 +4,12 @@ import { runAgent } from "@/lib/runtime/agentRunner";
 import { checkAndIncrementUsage } from "@/lib/subscriptionGuard";
 
 function makeSupabaseClient(authHeader: string | null) {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
+  
   return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    url,
+    key,
     authHeader ? { global: { headers: { Authorization: authHeader } } } : {}
   );
 }

@@ -1,9 +1,19 @@
 import { createClient } from "@supabase/supabase-js";
 
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY!
-);
+function getAdminClient() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
+  
+  if (!url || !key) {
+    if (process.env.NODE_ENV === "production") {
+      throw new Error("Missing Supabase environment variables");
+    }
+    // Return a dummy client during build if env vars are missing
+    return {} as any;
+  }
+  
+  return createClient(url, key);
+}
 
 export interface PlanLimits {
   maxAgents: number;
@@ -27,7 +37,7 @@ export function getPlanLimits(planName: string): PlanLimits {
  */
 export async function getTeamPlan(teamId: string): Promise<string> {
   // Check users table first (direct plan_id field used in codebase)
-  const { data: sub } = await supabaseAdmin
+  const { data: sub } = await getAdminClient()
     .from("subscriptions")
     .select("plan_id")
     .eq("team_id", teamId)
@@ -44,7 +54,7 @@ export async function checkAgentLimit(teamId: string): Promise<void> {
   const planName = await getTeamPlan(teamId);
   const limits = getPlanLimits(planName);
 
-  const { count } = await supabaseAdmin
+  const { count } = await getAdminClient()
     .from("agents")
     .select("*", { count: "exact", head: true })
     .eq("team_id", teamId);
@@ -67,7 +77,7 @@ export async function checkAndIncrementUsage(teamId: string, tokensUsed = 0): Pr
   const currentMonth = new Date().toISOString().slice(0, 7) + "-01"; // YYYY-MM-01
 
   // Upsert usage record for this month
-  const { data: usage } = await supabaseAdmin
+  const { data: usage } = await getAdminClient()
     .from("usage_credits")
     .select("*")
     .eq("team_id", teamId)
@@ -82,12 +92,12 @@ export async function checkAndIncrementUsage(teamId: string, tokensUsed = 0): Pr
 
   // Increment usage
   if (usage) {
-    await supabaseAdmin
+    await getAdminClient()
       .from("usage_credits")
       .update({ used: usage.used + 1 })
       .eq("id", usage.id);
   } else {
-    await supabaseAdmin
+    await getAdminClient()
       .from("usage_credits")
       .insert({ team_id: teamId, used: 1, month: currentMonth });
   }
