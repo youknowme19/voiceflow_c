@@ -41,5 +41,19 @@ export function getRouteClient(request: Request) {
     return {} as any;
   }
 
+  // Options for the client
+  const options: any = {
+    global: {
+      headers: {
+        'apikey': supabaseAnonKey,
+      }
+    }
+  };
+
+  // If we have an auth header, add it to the global headers
+  if (authHeader && authHeader !== 'Bearer undefined' && authHeader !== 'undefined' && authHeader.trim() !== '') {
+    options.global.headers['Authorization'] = authHeader;
+  }
+
   return createClient(supabaseUrl, supabaseAnonKey, options);
 }
