@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { NextResponse } from "next/server";
 import { runAgent } from "@/lib/runtime/agentRunner";
 import { getAdminClient } from "@/lib/supabaseServer";
