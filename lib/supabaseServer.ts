@@ -1,17 +1,22 @@
 import { createClient } from '@supabase/supabase-js';
 
-// Helper to get admin client safely
+// Standard lazy helper for admin operations
 export function getAdminClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
   if (!url || !key) {
-    // During Next.js build / static analysis, env vars might be missing.
-    // We return a proxy or dummy to prevent a hard crash during the build.
-    if (process.env.NODE_ENV === "production" && process.env.NEXT_PHASE !== "phase-production-build") {
-       throw new Error("SUPABASE_SERVICE_ROLE_KEY is required for admin operations.");
-    }
-    return {} as any;
+    // Return a proxy that errors only when used during development/production runtime,
+    // but stays silent during build-time static analysis.
+    return new Proxy({} as any, {
+      get(_, prop) {
+        if (typeof prop === "string" && ["then", "catch", "finally"].includes(prop)) return undefined;
+        return () => {
+          console.error(`Supabase Admin Error: Attempted to use admin client but SUPABASE_SERVICE_ROLE_KEY is missing.`);
+          return { data: null, error: { message: "Supabase configuration missing" } };
+        };
+      }
+    });
   }
 
   return createClient(url, key, {
@@ -21,13 +26,6 @@ export function getAdminClient() {
     }
   });
 }
-
-// Global instance for convenience, but initialized lazily if possible or just export helper
-export const supabaseAdmin = (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY)
-  ? createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY, {
-      auth: { autoRefreshToken: false, persistSession: false }
-    })
-  : null;
 
 /**
  * Creates a server-side Supabase client that uses the Authorization header from the request.

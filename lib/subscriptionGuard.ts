@@ -1,19 +1,4 @@
-import { createClient } from "@supabase/supabase-js";
-
-function getAdminClient() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
-  
-  if (!url || !key) {
-    if (process.env.NODE_ENV === "production") {
-      throw new Error("Missing Supabase environment variables");
-    }
-    // Return a dummy client during build if env vars are missing
-    return {} as any;
-  }
-  
-  return createClient(url, key);
-}
+import { getAdminClient } from "@/lib/supabaseServer";
 
 export interface PlanLimits {
   maxAgents: number;

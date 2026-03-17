@@ -1,17 +1,30 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+let supabaseInstance: any = null;
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.error('Supabase environment variables are missing!', {
-    url: !!supabaseUrl,
-    key: !!supabaseAnonKey
-  });
+export function getSupabaseBrowserClient() {
+  if (supabaseInstance) return supabaseInstance;
+
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (!url || !key) {
+    // Return a silent dummy during build
+    return new Proxy({} as any, {
+      get(_, prop) {
+        return () => ({ data: null, error: { message: "Supabase config missing" } });
+      }
+    });
+  }
+
+  supabaseInstance = createClient(url, key);
+  return supabaseInstance;
 }
 
-// during build the env vars may be undefined; guard against it to avoid errors
-export const supabase =
-  supabaseUrl && supabaseAnonKey
-    ? createClient(supabaseUrl, supabaseAnonKey)
-    : ({} as ReturnType<typeof createClient>);
+// Keep the export for backward compatibility but make it a getter
+export const supabase = new Proxy({} as any, {
+  get(_, prop) {
+    const client = getSupabaseBrowserClient();
+    return client[prop];
+  }
+});

@@ -98,11 +98,10 @@ export async function embedAndStoreDocument(
   documentId: string,
   text: string,
   supabaseClient?: any
-): Promise<{ chunksStored: number }> {
-  const client = supabaseClient || createClient(
-    process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY!
-  );
+  const url = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
+
+  const client = supabaseClient || (url && key ? createClient(url, key) : ({} as any));
 
   const chunks = chunkText(text);
   let chunksStored = 0;
@@ -132,11 +131,10 @@ export async function retrieveContext(
   agentId: string,
   limit = 3,
   supabaseClient?: any
-): Promise<string> {
-  const client = supabaseClient || createClient(
-    process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_ANON_KEY!
-  );
+  const url = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  const client = supabaseClient || (url && key ? createClient(url, key) : ({} as any));
 
   try {
     const queryEmbedding = await createEmbedding(query);
