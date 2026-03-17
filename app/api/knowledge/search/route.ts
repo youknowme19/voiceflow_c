@@ -1,14 +1,7 @@
+export const dynamic = 'force-dynamic';
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { getRouteClient } from "@/lib/supabaseServer";
 import { retrieveContext } from "@/lib/rag_engine";
-
-function makeClient(authHeader: string | null) {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    authHeader ? { global: { headers: { Authorization: authHeader } } } : {}
-  );
-}
 
 // GET /api/knowledge/search?agentId=...&query=...
 export async function GET(request: Request) {

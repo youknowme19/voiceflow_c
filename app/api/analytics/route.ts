@@ -1,13 +1,5 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
-
-function makeClient(authHeader: string | null) {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    authHeader ? { global: { headers: { Authorization: authHeader } } } : {}
-  );
-}
+import { getRouteClient } from "@/lib/supabaseServer";
 
 // GET /api/analytics?teamId=... OR /api/analytics?agentId=...
 export async function GET(request: Request) {
@@ -16,7 +8,7 @@ export async function GET(request: Request) {
     const teamId = url.searchParams.get("teamId");
     const agentId = url.searchParams.get("agentId");
 
-    const supabase = makeClient(request.headers.get("Authorization"));
+    const supabase = getRouteClient(request);
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 

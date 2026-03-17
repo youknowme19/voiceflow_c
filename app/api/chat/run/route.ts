@@ -1,19 +1,8 @@
 export const dynamic = 'force-dynamic';
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
 import { runAgent } from "@/lib/runtime/agentRunner";
 import { checkAndIncrementUsage } from "@/lib/subscriptionGuard";
-
-function makeSupabaseClient(authHeader: string | null) {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
-  
-  return createClient(
-    url,
-    key,
-    authHeader ? { global: { headers: { Authorization: authHeader } } } : {}
-  );
-}
+import { getRouteClient } from "@/lib/supabaseServer";
 
 export async function POST(request: Request) {
   const startTime = Date.now();
@@ -26,8 +15,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "agentId and userMessage are required" }, { status: 400 });
     }
 
-    const authHeader = request.headers.get("Authorization");
-    const supabase = makeSupabaseClient(authHeader);
+    const supabase = getRouteClient(request);
 
     // Authenticate user
     const { data: { user }, error: authError } = await supabase.auth.getUser();

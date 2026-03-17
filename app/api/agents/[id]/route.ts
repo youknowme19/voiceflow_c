@@ -1,14 +1,7 @@
+export const dynamic = 'force-dynamic';
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { getRouteClient } from "@/lib/supabaseServer";
 import { checkAgentLimit } from "@/lib/subscriptionGuard";
-
-function makeClient(authHeader: string | null) {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    authHeader ? { global: { headers: { Authorization: authHeader } } } : {}
-  );
-}
 
 // GET /api/agents/[id] — fetch a single agent
 export async function GET(
@@ -17,7 +10,7 @@ export async function GET(
 ) {
   const { id } = await params;
   try {
-    const supabase = makeClient(request.headers.get("Authorization"));
+    const supabase = getRouteClient(request);
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -42,7 +35,7 @@ export async function PATCH(
 ) {
   const { id } = await params;
   try {
-    const supabase = makeClient(request.headers.get("Authorization"));
+    const supabase = getRouteClient(request);
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -74,7 +67,7 @@ export async function DELETE(
 ) {
   const { id } = await params;
   try {
-    const supabase = makeClient(request.headers.get("Authorization"));
+    const supabase = getRouteClient(request);
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 

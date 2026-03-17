@@ -1,10 +1,7 @@
+export const dynamic = 'force-dynamic';
 import { NextResponse } from "next/server";
-import { getRouteClient } from "../../../../../lib/supabaseServer";
-import { runAgent } from "../../../../../lib/runtime/agentRunner";
-
-function makeClient(request: Request) {
-  return getRouteClient(request);
-}
+import { getRouteClient } from "@/lib/supabaseServer";
+import { runAgent } from "@/lib/runtime/agentRunner";
 
 // GET /api/agents/[id]/test — fetch conversation test sessions for an agent
 export async function GET(
@@ -13,7 +10,7 @@ export async function GET(
 ) {
   try {
     const { id: agentId } = await params;
-    const supabase = makeClient(request);
+    const supabase = getRouteClient(request);
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
