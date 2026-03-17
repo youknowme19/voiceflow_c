@@ -7,6 +7,7 @@ export async function GET(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     const supabase = getRouteClient(request);
     const { data: { user } } = await supabase.auth.getUser();
@@ -44,6 +45,7 @@ export async function POST(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id: agentId } = await params;
   try {
     const supabase = getRouteClient(request);
     const { data: { user } } = await supabase.auth.getUser();

@@ -14,7 +14,7 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "agentId and query are required" }, { status: 400 });
     }
 
-    const supabase = makeClient(request.headers.get("Authorization"));
+    const supabase = getRouteClient(request);
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -28,7 +28,7 @@ export async function GET(request: Request) {
 // Also support the embed endpoint used by knowledge page
 export async function POST(request: Request) {
   try {
-    const supabase = makeClient(request.headers.get("Authorization"));
+    const supabase = getRouteClient(request);
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
