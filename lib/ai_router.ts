@@ -20,7 +20,7 @@ export interface AIRouterResult {
 }
 
 // Default free models
-const DEFAULT_FREE_OPENROUTER_MODEL = "google/gemini-2.0-flash-exp:free";
+const DEFAULT_FREE_OPENROUTER_MODEL = "meta-llama/llama-3.1-8b-instruct:free";
 const DEFAULT_GEMINI_MODEL = "gemini-2.0-flash";
 
 /**

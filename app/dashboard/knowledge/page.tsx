@@ -110,16 +110,32 @@ export default function KnowledgePage() {
 
       if (docErr) throw docErr;
 
-      if (fileExt === 'txt' || fileExt === 'md') {
-        const text = await file.text();
-        await fetch('/api/knowledge/embed', {
+      if (fileExt === 'txt' || fileExt === 'md' || fileExt === 'pdf') {
+        let text = undefined;
+        if (fileExt !== 'pdf') {
+           text = await file.text();
+        }
+        
+        const res = await fetch('/api/knowledge/embed', {
           method: 'POST',
           headers: { 
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${session?.access_token}`
           },
-          body: JSON.stringify({ documentId: docData.id, text }),
+          body: JSON.stringify({ 
+            documentId: docData.id, 
+            url, 
+            type: fileExt,
+            text 
+          }),
         });
+
+        if (!res.ok) {
+           const err = await res.json();
+           throw new Error(err.error || "Failed to extract and embed document");
+        }
+      } else {
+        throw new Error("Unsupported file type. Please upload PDF, TXT, or MD.");
       }
 
       setFile(null);

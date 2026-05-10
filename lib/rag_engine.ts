@@ -1,6 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 
-const EMBEDDING_DIM = 768; // Gemini text-embedding-004 dimension
+const EMBEDDING_DIM = 1536; // OpenAI/Database expected dimension
 const CHUNK_SIZE = 500;
 const CHUNK_OVERLAP = 100;
 
@@ -22,11 +22,38 @@ export function chunkText(text: string, chunkSize = CHUNK_SIZE, overlap = CHUNK_
 }
 
 /**
- * Generate a 768-dimensional embedding using Gemini text-embedding-004
+ * Generate a 1536-dimensional embedding using Open Source HuggingFace model primarily (padded to 1536)
  */
 export async function createEmbedding(text: string): Promise<number[]> {
-  const apiKey = process.env.GEMINI_API_KEY;
+  const hfToken = process.env.HUGGINGFACE_API_KEY;
+  
+  if (hfToken) {
+    try {
+      const response = await fetch(
+        "https://api-inference.huggingface.co/pipeline/feature-extraction/BAAI/bge-small-en-v1.5",
+        {
+          headers: { Authorization: `Bearer ${hfToken}`, "Content-Type": "application/json" },
+          method: "POST",
+          body: JSON.stringify({ inputs: text.slice(0, 512), options: { wait_for_model: true } }),
+        }
+      );
+      if (response.ok) {
+        const result = await response.json();
+        const vec = Array.isArray(result[0]) ? result[0] : result;
+        if (Array.isArray(vec) && vec.length > 0) {
+          // Pad or truncate to EMBEDDING_DIM (768)
+          return padOrTruncate(vec, EMBEDDING_DIM);
+        }
+      } else {
+        console.error(`[RAG] HuggingFace API error: ${await response.text()}`);
+      }
+    } catch (e) {
+      console.error("[RAG] HuggingFace embedding failed:", e);
+    }
+  }
 
+  // Fallback: Gemini API
+  const apiKey = process.env.GEMINI_API_KEY;
   if (apiKey) {
     try {
       const url = `https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent?key=${apiKey}`;
@@ -43,39 +70,14 @@ export async function createEmbedding(text: string): Promise<number[]> {
       if (response.ok) {
         const data = await response.json();
         const values: number[] = data.embedding?.values || [];
-        if (values.length === EMBEDDING_DIM) return values;
-        console.warn(`[RAG] Unexpected embedding dimension: ${values.length}`);
+        if (values.length > 0) return padOrTruncate(values, EMBEDDING_DIM);
+        console.warn(`[RAG] Empty embedding returned from Gemini`);
       } else {
         const err = await response.text();
         console.error(`[RAG] Gemini embedding error: ${err}`);
       }
     } catch (e) {
       console.error("[RAG] Gemini embedding failed:", e);
-    }
-  }
-
-  // Fallback: HuggingFace (if key provided)
-  const hfToken = process.env.HUGGINGFACE_API_KEY;
-  if (hfToken) {
-    try {
-      const response = await fetch(
-        "https://api-inference.huggingface.co/pipeline/feature-extraction/BAAI/bge-small-en-v1.5",
-        {
-          headers: { Authorization: `Bearer ${hfToken}`, "Content-Type": "application/json" },
-          method: "POST",
-          body: JSON.stringify({ inputs: text.slice(0, 512), options: { wait_for_model: true } }),
-        }
-      );
-      if (response.ok) {
-        const result = await response.json();
-        const vec = Array.isArray(result[0]) ? result[0] : result;
-        if (Array.isArray(vec) && vec.length > 0) {
-          // Pad or truncate to EMBEDDING_DIM
-          return padOrTruncate(vec, EMBEDDING_DIM);
-        }
-      }
-    } catch (e) {
-      console.error("[RAG] HuggingFace embedding failed:", e);
     }
   }
 
@@ -112,7 +114,7 @@ export async function embedAndStoreDocument(
     const { error } = await client.from("embeddings").insert({
       document_id: documentId,
       text: chunk,
-      embedding,
+      vector: embedding,
     });
     if (error) {
       console.error("[RAG] Failed to store chunk:", error);
@@ -145,7 +147,7 @@ export async function retrieveContext(
       query_embedding: queryEmbedding,
       match_threshold: 0.6,
       match_count: limit,
-      p_agent_id: agentId,
+      agent_id: agentId,
     });
 
     if (error) {
